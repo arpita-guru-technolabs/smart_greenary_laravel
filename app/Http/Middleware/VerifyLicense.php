@@ -11,49 +11,67 @@ class VerifyLicense
 {
     public function handle(Request $request, Closure $next)
     {
-        // Skip installer routes
-        if ($request->is('install*') || $request->is('installer*') || $request->is('license/revalidate*')) {
+        // Skip installer and license routes
+        if (
+            $request->is('install*') ||
+            $request->is('installer*') ||
+            $request->is('license/revalidate*')
+        ) {
             return $next($request);
         }
 
         $purchase = config('app.license_purchase');
-        $domain = url('/');
         $token = config('app.license_token');
         $signature = config('app.license_signature');
 
+        // Use the same domain source that is used when generating the signature
+        $domain = $request->getSchemeAndHttpHost();
+
         if (!$purchase || !$domain || !$token || !$signature) {
-            // Redirect to revalidation page with intended URL
-            $intended = $request->fullUrl();
-            return redirect()->route('license.revalidate', ['intended' => $intended, 'message' => 'Application is not licensed.']);
+            return redirect()->route('license.revalidate', [
+                'intended' => $request->fullUrl(),
+                'message' => 'Application is not licensed.',
+            ]);
         }
 
-        // Verify signature integrity to make tampering harder
-        $domain = str_replace('/public', '', $domain);
-        $expected = LicenseValidator::signature($purchase, $domain, $token);
+        // Verify signature integrity
+        $expected = LicenseValidator::signature(
+            $purchase,
+            $domain,
+            $token
+        );
 
-        if (hash_equals($expected, (string)$signature) !== true) {
-            $intended = $request->fullUrl();
-            return redirect()->route('license.revalidate', ['intended' => $intended, 'message' => 'License signature mismatch.']);
+        if (!hash_equals($expected, (string) $signature)) {
+            return redirect()->route('license.revalidate', [
+                'intended' => $request->fullUrl(),
+                'message' => 'License signature mismatch.',
+            ]);
         }
 
         // Periodic remote revalidation
         $cacheKey = 'license_recheck_ts';
         $last = Cache::get($cacheKey);
-        $interval = (int)config('license.recheck_minutes', 720);
+        $interval = (int) config('license.recheck_minutes', 720);
         $now = now()->timestamp;
-        if (!$last || ($now - (int)$last) > ($interval * 60)) {
+
+        if (!$last || ($now - (int) $last) > ($interval * 60)) {
             $client = new LicenseValidator();
             $res = $client->validate($purchase, $domain);
-            if ($res['success'] == false) {
-                $intended = $request->fullUrl();
-                return redirect()->route('license.revalidate', ['intended' => $intended, 'message' => 'License validation failed: ' . (($res['data']['message'] ?? 'Unknown'))]);
+
+            if (($res['success'] ?? false) === false) {
+                return redirect()->route('license.revalidate', [
+                    'intended' => $request->fullUrl(),
+                    'message' => 'License validation failed: ' . ($res['message'] ?? 'Unknown'),
+                ]);
             }
-            // Optionally update token if server returns a new one
+
+            // Update runtime token if validator returns a new one
             $newToken = $res['data']['token'] ?? null;
+
             if ($newToken && $newToken !== $token) {
-                // Refresh signature in runtime (cannot write .env here safely)
                 config(['app.license_token' => $newToken]);
             }
+
             Cache::put($cacheKey, $now, now()->addMinutes($interval));
         }
 

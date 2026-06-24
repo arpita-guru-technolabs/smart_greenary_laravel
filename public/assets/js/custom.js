@@ -1,4 +1,5 @@
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
 const panel = document.getElementById('panel') ? document.getElementById('panel').getAttribute('data-panel') : 'admin';
 
 const root = getComputedStyle(document.documentElement);
@@ -57,6 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log(e);
                     }
                     clearValidationErrors(form);
+                    console.log('Response:', data);
+                    console.log('Redirect URL:', data?.data?.redirect_url);
                     if (data.data && data.data.redirect_url) {
                         Toast.fire({
                             icon: "success",
@@ -64,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                         setTimeout(function () {
                             window.location.href = data.data.redirect_url;
+                            console.log('Redirect URL redirecting now:', data?.data?.redirect_url);
                         }, 2000)
                         return;
                     }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\LicenseValidator;
 use App\Types\Api\ApiResponseType;
-use Froiden\LaravelInstaller\Helpers\Reply;
+use App\Installer\Helpers\Reply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 

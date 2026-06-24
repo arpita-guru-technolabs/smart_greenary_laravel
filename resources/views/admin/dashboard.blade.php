@@ -241,7 +241,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-lg-3">
+                    {{--  <div class="col-sm-6 col-lg-3">
                         <div class="card card-sm">
                             <a href="{{ route('admin.delivery-boys.index') }}" class="card-body text-decoration-none">
                                 <div class="row align-items-center">
@@ -268,7 +268,7 @@
                                 </div>
                             </a>
                         </div>
-                    </div>
+                    </div>--}}
                     <div class="col-sm-6 col-lg-3">
                         <div class="card card-sm">
                             <a href="{{ route('admin.products.index') }}" class="card-body text-decoration-none">
@@ -476,6 +476,7 @@
             </div>
 
             <!-- Top Delivery Boys Section -->
+            {{-- 
             <div class="col-lg-4">
                 <div class="card">
                     <div class="card-header">
@@ -532,7 +533,7 @@
 
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Categories with Filters Section -->
             <div class="col-12">

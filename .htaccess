@@ -1,22 +1,25 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    ##
-    ## You may need to uncomment (remove #) the following line for some hosting environments,
-    ## if you have installed to a subdirectory, enter the name here also.
-    ## Example: for https://site.com enter: "/", for https://site.com/something enter: "/something/"
-    ##
-    ## RewriteBase /
+    # 1. Stop processing if the request is already for a real file or directory
+    RewriteCond %{REQUEST_FILENAME} -d [OR]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
 
-    RewriteCond %{REQUEST_URI}::$1 ^(/.+)/(.*)::\2$
-    RewriteRule ^(.*) - [E=BASE:%1]
-
-    RewriteCond %{REQUEST_URI} !^public
+    # 2. Correctly check if the request is NOT already pointing to the public folder
+    RewriteCond %{REQUEST_URI} !^/public/ [NC]
+    
+    # 3. Rewrite all remaining traffic seamlessly into the public folder
     RewriteRule ^(.*)$ public/$1 [L]
-
 </IfModule>
 
 <IfModule mod_mime.c>
-  AddType text/javascript mjs
-  AddType text/plain ftl
+    AddType text/javascript mjs
+    AddType text/plain ftl
 </IfModule>
+
+# 4. CRITICAL SECURITY: Block web browsers from reading your private .env file
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>

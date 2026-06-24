@@ -309,9 +309,17 @@
     </style>
 @endsection
 @push('scripts')
-    <script
+    <!--<script
         src="https://maps.googleapis.com/maps/api/js?key={{$googleApiKey}}&libraries=maps,places,marker&callback=initMap"
         async defer>
-    </script>
+    </script>-->
+
+    <!--<script
+        src="https://maps.googleapis.com/maps/api/js?key={{$googleApiKey}}&v=3.64&libraries=maps,places,marker,drawing&callback=initMap"
+        async defer>
+    </script>-->
+
+    <script src="https://maps.googleapis.com/maps/api/js?key={{$googleApiKey}}&v=3.64&libraries=maps,places,marker&callback=initMap" async defer></script>
+
     <script src="{{ hyperAsset('assets/js/stores.js')}}"></script>
 @endpush

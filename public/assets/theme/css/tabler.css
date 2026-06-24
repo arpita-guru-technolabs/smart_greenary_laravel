@@ -13509,9 +13509,9 @@ body[data-bs-theme=dark] .navbar[data-bs-theme=light] {
   --tblr-dark: #1f2937;
   --tblr-light: #f9fafb;
   /** Brand colors */
-  --tblr-brand: #066fd1;
+  --tblr-brand: #76C836;
   /** Theme colors */
-  --tblr-primary: #066fd1;
+  --tblr-primary: #76C836;
   --tblr-primary-rgb: 6, 111, 209;
   --tblr-primary-fg: var(--tblr-light);
   --tblr-primary-darken: #0564bc;
