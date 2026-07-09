@@ -317,7 +317,7 @@ trait AuthTrait
     /**
      * Login - Handles both API and Web requests
      */
-    public function login(Request $request)
+    /*public function login(Request $request)
     {
         try {
             // 1) Validate input
@@ -423,7 +423,110 @@ trait AuthTrait
                 data: []
             );
         }
+    }*/
+
+
+    /**
+ * Login - Handles both API and Web requests
+ */
+public function login(Request $request)
+{
+    try {
+        // 1) Validate input
+        $validated = $request->validate([
+            'email' => 'required_without:mobile|email',
+            'mobile' => 'required_without:email|numeric',
+            'password' => 'required',
+        ]);
+
+        // 2) Build credentials and identifier
+        $meta = $this->buildCredentials($request, $validated);
+        $credentials = $meta['credentials'];
+        $identifierField = $meta['field'];
+        $identifierValue = $meta['value'];
+
+        // 3) Optional role-based access check (admin/seller)
+        $role = property_exists($this, 'role') ? $this->role : null;
+        if ($response = $this->checkRoleAccess($role, $identifierField, $identifierValue)) {
+            return $response;
+        }
+
+        // 4) Attempt authentication
+        if (!$this->attemptAuthentication($credentials)) {
+            if (!$request->expectsJson()) {
+                return back()->with('error', __('labels.invalid_credentials'));
+            }
+            return ApiResponseType::sendJsonResponse(
+                success: false,
+                message: __('labels.invalid_credentials'),
+                data: []
+            );
+        }
+
+        // 5) Get authenticated user
+        $user = FacadesAuth::user();
+
+        // 6) Check seller verification status (ONLY for seller role)
+        if ($role === 'seller') {
+            $seller = Seller::where('user_id', $user->id)->first();
+            
+            if ($seller && $seller->verification_status !== 'approved') {
+                FacadesAuth::logout();
+                
+                if (!$request->expectsJson()) {
+                    return back()->with('error', 'Your account is not approved by admin yet.');
+                }
+                
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your account is not approved by admin yet.',
+                    'data' => ['verification_status' => $seller->verification_status]
+                ], 403);
+            }
+        }
+
+        // 7) Check email verification - ONLY FOR SELLER ROLE
+        if ($role === 'seller' && !$user->email_verified_at) {
+            // For legacy sellers, set email_verified_at automatically
+            $user->update(['email_verified_at' => now()]);
+        }
+
+        // 8) WEB REQUEST - Redirect to dashboard
+        if (!$request->expectsJson()) {
+            $request->session()->regenerate();
+            
+            // Redirect based on role
+            if ($role === 'admin') {
+                return redirect()->intended(route('admin.dashboard'));
+            }
+            return redirect()->intended(route('seller.dashboard'));
+        }
+
+        // 9) API REQUEST - Return JSON response
+        return $this->finalizeLogin($request, $user);
+        
+    } catch (ValidationException $e) {
+        if (!$request->expectsJson()) {
+            return back()->withErrors($e->errors())->withInput();
+        }
+        
+        return ApiResponseType::sendJsonResponse(
+            success: false,
+            message: __('labels.validation_error') . ":- " . $e->getMessage(),
+            data: $e->errors()
+        );
+    } catch (\Exception $e) {
+        if (!$request->expectsJson()) {
+            return back()->with('error', $e->getMessage());
+        }
+        
+        return ApiResponseType::sendJsonResponse(
+            success: false,
+            message: __('labels.login_failed', ['error' => $e->getMessage()]),
+            data: []
+        );
     }
+}
 
 
 

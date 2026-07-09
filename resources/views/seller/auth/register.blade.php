@@ -48,7 +48,7 @@
                             </div>
                         @endif
                         
-                        <h2 class="h2 text-center mb-4">{{ __('labels.create_seller_account') }}</h2>
+                        <h2 class="h2 text-center mb-4">Create Farmer Account</h2>
                         
                         <form id="register-form" action="{{route('seller.register.post')}}" method="post" autocomplete="off" novalidate>
                             @csrf

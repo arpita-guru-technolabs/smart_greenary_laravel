@@ -105,7 +105,7 @@
     </div>
 @endif
 
-                        <h2 class="h2 text-center mb-4">Login to your Seller Console</h2>
+                        <h2 class="h2 text-center mb-4">Login to your Farmer Console</h2>
                         <form id="login-form" action="{{route('seller.login.post')}}" method="post"
                               autocomplete="off" novalidate>
                             @csrf
@@ -140,6 +140,10 @@
                                     <span class="form-check-label">Remember me on this device</span>
                                 </label>
                             </div>
+
+                             <span class="form-label-description"><a
+                                            href="{{route('seller.register')}}">Sign up</a></span>
+
                             <div class="form-footer">
                                 <button type="submit" class="btn btn-primary w-100">Sign in</button>
                             </div>
