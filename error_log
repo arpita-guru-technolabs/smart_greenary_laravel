@@ -1,3 +1,10 @@
 [17-Jun-2025 05:31:38 UTC] PHP Fatal error:  Allowed memory size of 1610612736 bytes exhausted (tried to allocate 167772160 bytes) in phar:///usr/local/bin/composer1.phar/src/Composer/DependencyResolver/RuleSet.php on line 90
 [17-Jun-2025 05:42:37 UTC] PHP Fatal error:  Allowed memory size of 1610612736 bytes exhausted (tried to allocate 167772160 bytes) in phar:///usr/local/bin/composer1.phar/src/Composer/DependencyResolver/RuleSet.php on line 90
 [17-Jun-2025 05:48:57 UTC] PHP Fatal error:  Allowed memory size of 1610612736 bytes exhausted (tried to allocate 167772160 bytes) in phar:///usr/local/bin/composer1.phar/src/Composer/DependencyResolver/RuleSet.php on line 90
+[06-Jul-2026 14:06:44 Asia/Kolkata] PHP Fatal error:  Uncaught RuntimeException: stty: standard input: Input/output error in /home2/gurutsk8/public_html/website/laravel/smart_greenary/vendor/laravel/prompts/src/Terminal.php:133
+Stack trace:
+#0 /home2/gurutsk8/public_html/website/laravel/smart_greenary/vendor/laravel/prompts/src/Terminal.php(74): Laravel\Prompts\Terminal->exec('stty 500:5:bf:8...')
+#1 /home2/gurutsk8/public_html/website/laravel/smart_greenary/vendor/laravel/prompts/src/Prompt.php(446): Laravel\Prompts\Terminal->restoreTty()
+#2 [internal function]: Laravel\Prompts\Prompt->__destruct()
+#3 {main}
+  thrown in /home2/gurutsk8/public_html/website/laravel/smart_greenary/vendor/laravel/prompts/src/Terminal.php on line 133

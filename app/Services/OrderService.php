@@ -157,11 +157,18 @@ class OrderService
         $settingService = app(SettingService::class);
         $settings = $settingService->getSettingByVariable(SettingTypeEnum::SYSTEM());
 
+           // ===== DECODE JSON TO ARRAY =====
+            $settingsValue = is_array($settings->value) 
+                ? $settings->value 
+                : json_decode($settings->value, true);
+            // ================================
+
         // Get user's cart
         $cart = CartService::getUserCart($user);
         $storeCount = CartService::cartStoreCount($user);
 
-        if ($settings->value['checkoutType'] === "single_store" && $storeCount > 1) {
+        //if ($settings->value['checkoutType'] === "single_store" && $storeCount > 1) {
+         if ($settingsValue['checkoutType'] === "single_store" && $storeCount > 1) {
             return [
                 'success' => false,
                 'message' => __('labels.checkout_type_single_store_error'),

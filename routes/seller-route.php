@@ -38,6 +38,16 @@ Route::prefix('seller')->name('seller.')->group(function () {
             return view('seller.auth.login');
         })->name('login.index');
 
+
+        Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('register');
+        Route::post('register', [AuthController::class, 'register'])->name('register.post');
+
+        Route::get('register/verify-otp', [AuthController::class, 'showOtpVerification'])->name('register.verify-otp');
+        Route::post('register/verify-otp', [AuthController::class, 'verifyOtp'])->name('register.verify-otp.post');
+        Route::get('register/resend-otp', [AuthController::class, 'resendOtp'])->name('register.resend-otp');
+
+        Route::get('register/success', [AuthController::class, 'registrationSuccess'])->name('register.success');
+
         // Password Reset Routes
         Route::get('forgot-password', [PasswordResetController::class, 'showForgotPasswordForm'])->name('password.request');
         Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');

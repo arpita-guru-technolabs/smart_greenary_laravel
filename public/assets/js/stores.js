@@ -280,4 +280,54 @@ $(document).ready(function () {
         data.verification_status = $('#verificationStatus').val();
         data.visibility_status = $('#visibilityStatus').val();
     });
+
+
+    // Toggle store visibility status
+    document.addEventListener('click', function (event) {
+        const toggleStoreStatus = event.target.closest('.toggle-store-status');
+        if (!toggleStoreStatus) return;
+
+        const id = toggleStoreStatus.getAttribute('data-id');
+
+        toggleStoreStatus.disabled = true;
+        let originalHtml = toggleStoreStatus.innerHTML;
+
+        toggleStoreStatus.innerHTML = `
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        `;
+
+        axios.post(`${base_url}/${panel}/stores/${id}/toggle-visibility`)
+            .then(function (response) {
+                let data = response.data;
+
+                if (data.success) {
+                    $('#stores-table').DataTable().ajax.reload(null, false);
+                    Toast.fire({
+                        icon: "success", 
+                        title: data.message || 'Store status updated successfully'
+                    });
+                } else {
+                    Toast.fire({
+                        icon: "error", 
+                        title: data.message || 'Failed to update store status'
+                    });
+                }
+
+                toggleStoreStatus.disabled = false;
+                toggleStoreStatus.innerHTML = originalHtml;
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+                Toast.fire({
+                    icon: "error", 
+                    title: "An error occurred while updating store status."
+                });
+                toggleStoreStatus.disabled = false;
+                toggleStoreStatus.innerHTML = originalHtml;
+            });
+    });
+
+    //end
+
+
 });

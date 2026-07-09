@@ -205,6 +205,9 @@ enum AdminPermissionEnum: string
     case ORDER_VIEW = 'orders.view';
     case RETURN_VIEW = 'return.view';
     case PRODUCT_VIEW = 'product.view';
+    case PRODUCT_CREATE = 'product.create';  
+    case PRODUCT_EDIT = 'product.edit';          
+    case PRODUCT_DELETE = 'product.delete';      
     case PRODUCT_STATUS_UPDATE = 'product.status_update';
     case PRODUCT_FAQS_VIEW = 'product_faqs.view';
     case PROMO_CREATE = 'promo.create';
@@ -304,6 +307,9 @@ enum AdminPermissionEnum: string
                 'name' => 'Products',
                 'permissions' => [
                     self::PRODUCT_VIEW(),
+                    self::PRODUCT_CREATE(),      
+                    self::PRODUCT_EDIT(),        
+                    self::PRODUCT_DELETE(), 
                     self::PRODUCT_STATUS_UPDATE(),
                 ],
             ],

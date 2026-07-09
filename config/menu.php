@@ -143,14 +143,23 @@ return [
                 ],
             ],
         ],
-        'stores' => [
+      /*  'stores' => [
             'icon' => 'ti-building-warehouse',
             'route' => 'admin.sellers.store.index',
             'title' => 'labels.stores',
             'active' => 'stores',
             'permission' => 'store.view',
+        ],*/
+
+        'stores' => [
+            'icon' => 'ti-building-warehouse',
+            'route' => 'admin.stores.index',
+            'title' => 'labels.stores',
+            'active' => 'stores',
+            'permission' => 'store.view'
         ],
-        'products' => [
+
+        /*'products' => [
             'icon' => 'ti-cube-spark',
             'title' => 'labels.products',
             'active' => 'products',
@@ -175,7 +184,58 @@ return [
                     'permission' => 'product_faqs.view',
                 ],
             ],
+        ],*/
+
+        'products' => [
+                'icon' => 'ti-cube-spark',
+                'title' => 'labels.manage_products',
+                'active' => 'products',
+                'route' => [
+                    'products' => [
+                        'sub_active' => 'products',
+                        'sub_route' => 'admin.products.index',
+                        'sub_title' => 'labels.products',
+                        'permission' => 'product.view',
+                    ],
+                    'add_products' => [
+                        'sub_active' => 'add_products',
+                        'sub_route' => 'admin.products.create',
+                        'sub_title' => 'labels.add_products',
+                        'permission' => 'product.create',
+                    ],
+                    'bulk_upload' => [
+                        'sub_active' => 'bulk_upload',
+                        'sub_route' => 'admin.products.bulk-upload',
+                        'sub_title' => 'labels.bulk_upload',
+                        'permission' => 'product.create',
+                    ],
+                    'product_faqs' => [
+                        'sub_active' => 'product_faqs',
+                        'sub_route' => 'admin.product_faqs.index',
+                        'sub_title' => 'labels.product_faqs',
+                        'permission' => 'product_faqs.view',
+                    ],
+                    'addon_groups' => [
+                        'sub_active' => 'addon_groups',
+                        'sub_route' => 'admin.addon-groups.index',
+                        'sub_title' => 'labels.addon_groups',
+                        'permission' => 'addon_group.view',
+                    ],
+                    'product_addons' => [
+                        'sub_active' => 'product_addons',
+                        'sub_route' => 'admin.product-addons.index',
+                        'sub_title' => 'labels.product_addons',
+                        'permission' => 'product_addon.view',
+                    ],
+                    'store_addon_items' => [
+                        'sub_active' => 'store_addon_items',
+                        'sub_route' => 'admin.store-addon-items.index',
+                        'sub_title' => 'labels.store_addon_items',
+                        'permission' => 'store_addon_item.view',
+                    ],
+                ],
         ],
+
         'tax_rates' => [
             'icon' => 'ti-square-rounded-percentage',
             'route' => 'admin.tax-rates.index',

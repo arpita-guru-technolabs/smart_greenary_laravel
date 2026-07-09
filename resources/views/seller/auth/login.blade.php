@@ -18,6 +18,13 @@
                                 <path d="M12 16h.01"></path>
                             </svg>
                         </div>
+
+                        
+                        @error('email')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                        @enderror
+
+
                         <div>
 
                             If you can't login to seller panel, please <span><a href="{{ route('seller.login') }}" target="_blank"
@@ -45,7 +52,59 @@
                 </div>
                 <div class="card card-md">
                     <div class="card-body">
-                        @include('layouts.partials._alerts')
+                      {{--   @include('layouts.partials._alerts')  --}}
+
+                      @if(session('error'))
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <div class="d-flex">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon alert-icon">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M12 9v4" />
+                    <path d="M12 16h.01" />
+                </svg>
+            </div>
+            <div>{{ session('error') }}</div>
+        </div>
+        <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <div class="d-flex">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon alert-icon">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M12 9v4" />
+                    <path d="M12 16h.01" />
+                </svg>
+            </div>
+            <div>
+                @foreach($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
+            </div>
+        </div>
+        <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+    </div>
+@endif
+
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <div class="d-flex">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon alert-icon">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M5 12l5 5l10 -10" />
+                </svg>
+            </div>
+            <div>{{ session('success') }}</div>
+        </div>
+        <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+    </div>
+@endif
+
                         <h2 class="h2 text-center mb-4">Login to your Seller Console</h2>
                         <form id="login-form" action="{{route('seller.login.post')}}" method="post"
                               autocomplete="off" novalidate>

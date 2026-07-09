@@ -1,9 +1,4 @@
-@php
-    use App\Enums\Product\ProductVarificationStatusEnum;
-    $isApprovalView = request()->query('verification_status') === ProductVarificationStatusEnum::PENDING();
-@endphp
-@extends('layouts.admin.app', ['page' => $menuAdmin['products']['active'] ?? "", 'sub_page' => $menuAdmin['products']['route'][$isApprovalView ? 'pending_approval_products' : 'products']['sub_active']])
-
+@extends('layouts.admin.app', ['page' => 'products'])
 
 @section('title', __('labels.products'))
 
@@ -23,6 +18,7 @@
 
 @section('admin-content')
     <div class="page-wrapper">
+
         <div class="page-body">
             <div class="row row-cards">
                 <div class="col-12">
@@ -33,6 +29,97 @@
                                 <x-breadcrumb :items="$breadcrumbs"/>
                             </div>
                             <div class="card-actions">
+                                <div class="row g-2">
+                                    @if($createPermission ?? false)
+                                        <div class="col-auto">
+                                            @if($productCreateLimitReached ?? false)
+                                                <button type="button"
+                                                        class="btn btn-outline-primary d-none d-sm-inline-block"
+                                                        disabled>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
+                                                         height="24"
+                                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                         fill="none"
+                                                         stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                        <path d="M12 5l0 14"/>
+                                                        <path d="M5 12l14 0"/>
+                                                    </svg>
+                                                    {{ __('labels.bulk_upload') }}
+                                                </button>
+                                            @else
+                                                <a href="{{ route('admin.products.bulk-upload') }}"
+                                                   class="btn btn-outline-primary d-none d-sm-inline-block">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
+                                                         height="24"
+                                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                         fill="none"
+                                                         stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                        <path d="M12 5l0 14"/>
+                                                        <path d="M5 12l14 0"/>
+                                                    </svg>
+                                                    {{ __('labels.bulk_upload') }}
+                                                </a>
+                                            @endif
+                                        </div>
+                                        <div class="col-auto">
+                                            @if($productCreateLimitReached ?? false)
+                                                <button type="button" class="btn btn-primary d-none d-sm-inline-block"
+                                                        disabled>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
+                                                         height="24"
+                                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                         fill="none"
+                                                         stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                        <path d="M12 5l0 14"/>
+                                                        <path d="M5 12l14 0"/>
+                                                    </svg>
+                                                    {{ __('labels.add_new_product') }}
+                                                </button>
+                                            @else
+                                                <a href="{{ route('admin.products.create') }}"
+                                                   class="btn btn-primary d-none d-sm-inline-block">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
+                                                         height="24"
+                                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                         fill="none"
+                                                         stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                        <path d="M12 5l0 14"/>
+                                                        <path d="M5 12l14 0"/>
+                                                    </svg>
+                                                    {{ __('labels.add_new_product') }}
+                                                </a>
+                                            @endif
+                                        </div>
+                                    @endif
+                                    <div class="col-auto">
+                                        <button class="btn btn-outline-primary" id="refresh">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="icon icon-tabler icons-tabler-outline icon-tabler-refresh">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/>
+                                                <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
+                                            </svg>
+                                            {{ __('labels.refresh') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if($productCreateLimitReached ?? false)
+                            <div class="card-body border-top py-3">
+                                <div class="alert alert-warning mb-0 mx-3" role="alert">
+                                    {{ $productCreateLimitMessage }}
+                                </div>
+                            </div>
+                        @endif
+                        <div class="card-table">
+                            <div class="card-actions mt-3 ms-2">
                                 <div class="row g-2">
                                     <div class="col-auto">
                                         <select class="form-select" id="productTypeFilter">
@@ -53,33 +140,28 @@
                                     <div class="col-auto">
                                         <select class="form-select" id="productVerificationStatusFilter">
                                             <option value="">{{ __('labels.verification_status') }}</option>
-                                            @foreach(ProductVarificationStatusEnum::values() as $type)
+                                            @foreach(\App\Enums\Product\ProductVarificationStatusEnum::values() as $type)
                                                 <option
                                                     value="{{ $type }}">{{ ucfirst(\Illuminate\Support\Str::replace("_", " ",$type)) }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-auto">
-                                        <select class="form-select" id="productCategoryFilter" placeholder="{{ __('labels.category') }}">
+                                        <select class="form-select" id="productFilter">
+                                            <option value="">{{ __('labels.product_filter') }}</option>
+                                            @foreach(\App\Enums\Product\ProductFilterEnum::values() as $filter)
+                                                <option
+                                                    value="{{ $filter }}">{{ ucfirst(\Illuminate\Support\Str::replace("_", " ",$filter)) }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-auto">
-                                        <button class="btn btn-outline-primary" id="refresh">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                 stroke-linecap="round" stroke-linejoin="round"
-                                                 class="icon icon-tabler icons-tabler-outline icon-tabler-refresh">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/>
-                                                <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
-                                            </svg>
-                                            {{ __('labels.refresh') }}
-                                        </button>
+                                        <select class="form-select" id="productCategoryFilter"
+                                                placeholder="{{ __('labels.category') }}">
+                                        </select>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-table">
                             <div class="row w-full p-3">
                                 <x-datatable id="products-table" :columns="$columns"
                                              route="{{ route('admin.products.datatable') }}"

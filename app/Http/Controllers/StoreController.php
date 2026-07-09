@@ -86,16 +86,24 @@ class StoreController extends Controller
             ['data' => 'visibility_status', 'name' => 'visibility_status', 'title' => __('labels.visibility_status')],
             ['data' => 'created_at', 'name' => 'created_at', 'title' => __('labels.created_at')],
         ];
-        if ($this->getPanel() === 'seller') {
+
+       /* if ($this->getPanel() === 'seller') {
             $columns[] = ['data' => 'store_configuration', 'name' => 'store_configuration', 'title' => __('labels.store_configuration')];
             $columns[] = ['data' => 'action', 'name' => 'action', 'title' => __('labels.action'), 'orderable' => false, 'searchable' => false];
         } else {
             $columns[] = ['data' => 'seller_name', 'name' => 'seller_name', 'title' => __('labels.seller_name')];
-            $columns[] = ['data' => 'actions', 'name' => 'actions', 'title' => __('labels.actions')];
+            $columns[] = ['data' => 'actions', 'name' => 'actions', 'title' => __('labels.actions')];*/
+
+            // Use same columns for BOTH admin and seller
+            $columns[] = ['data' => 'store_configuration', 'name' => 'store_configuration', 'title' => __('labels.store_configuration')];
+            $columns[] = ['data' => 'action', 'name' => 'action', 'title' => __('labels.action'), 'orderable' => false, 'searchable' => false];
+
+
             if ($id != null) {
                 $seller = Seller::findOrFail($id);
             }
-        }
+            
+        //}
         $verificationStatus = StoreVerificationStatusEnum::values();
         $visibilityStatus = StoreVisibilityStatusEnum::values();
 
@@ -199,13 +207,14 @@ class StoreController extends Controller
 
         $editPermission = $this->editPermission;
         $deletePermission = $this->deletePermission;
+        $viewPermission = $this->viewPermission;
 
         $data = $query
             ->orderBy($orderColumn, $orderDirection)
             ->skip($start)
             ->take($length)
             ->get()
-            ->map(function ($store) use ($editPermission, $deletePermission) {
+            ->map(function ($store) use ($editPermission, $deletePermission, $viewPermission) {
                 $data = [
                     'id' => $store->id,
                     'name' => $store->name,
@@ -219,7 +228,7 @@ class StoreController extends Controller
                     ])->render(),
                     'created_at' => $store->created_at->format('Y-m-d'),
                 ];
-                if ($this->getPanel() === 'seller') {
+               /* if ($this->getPanel() === 'seller') {
                     $data += [
                         'store_configuration' => view('seller.stores.partials.store-config-button', ['store' => $store])->render(),
                         'action' => view('partials.actions', [
@@ -237,7 +246,36 @@ class StoreController extends Controller
                         'seller_name' => $store->seller->user->name ?? "",
                         'actions' => view('admin.stores.partials.actions', ['store' => $store])->render(),
                     ];
-                }
+                }*/
+
+                // Use same structure for BOTH admin and seller
+                $data['store_configuration'] = view($this->panelView('stores.partials.store-config-button'), ['store' => $store])->render();
+                // $data['action'] = view('partials.actions', [
+                //     'modelName' => 'store',
+                //     'id' => $store->id,
+                //     'title' => $store->name,
+                //     'mode' => 'page_view',
+                //     'route' => route($this->panelView('stores.edit'), $store->id),
+                //     'editPermission' => $editPermission,
+                //     'deletePermission' => $deletePermission,
+                //      // Add these two lines for status toggle
+                //     'showStatusToggle' => true,
+                //     'currentStatus' => $store->visibility_status->value,
+                // ])->render();
+
+
+                $data['action'] = view('admin.stores.partials.actions', [
+                    'id' => $store->id,
+                    'title' => $store->name,
+                    'modelName' => 'store',
+                    'mode' => 'page_view',
+                    'route' => route($this->panelView('stores.edit'), $store->id),
+                    'editPermission' => $editPermission,
+                    'deletePermission' => $deletePermission,
+                    'viewPermission' => $viewPermission ?? false,
+                    'currentStatus' => $store->visibility_status->value,
+                ])->render();
+
                 return $data;
             })
             ->toArray();
@@ -284,7 +322,7 @@ class StoreController extends Controller
                 $validated['country_code'] = $country->phonecode;
                 $validated['currency_code'] = $country->currency;
             }
-            $validated['verification_status'] = StoreVerificationStatusEnum::NOT_APPROVED();
+            $validated['verification_status'] = StoreVerificationStatusEnum::APPROVED();
             $validated['visibility_status'] = StoreVisibilityStatusEnum::DRAFT();
 
             // Pre-check subscription usage for store_limit only when multivendor
@@ -575,5 +613,34 @@ class StoreController extends Controller
         });
 
         return response()->json($results);
+    }
+
+   public function toggleVisibility($id): JsonResponse
+   {
+        try {
+            $store = Store::findOrFail($id);
+            $this->authorize('update', $store);                      
+            
+            if ($store->visibility_status->value === 'draft') {
+                $store->visibility_status = 'visible';
+            } else {
+                $store->visibility_status = 'draft';
+            }
+            
+            $store->save();
+            
+            return ApiResponseType::sendJsonResponse(
+                true, 
+                'Store status updated successfully', 
+                ['visibility_status' => $store->visibility_status->value]
+            );
+            
+        } catch (AuthorizationException $e) {
+            return ApiResponseType::sendJsonResponse(false, 'Unauthorized action: ' . $e->getMessage());
+        } catch (ModelNotFoundException $e) {
+            return ApiResponseType::sendJsonResponse(false, 'Store not found');
+        } catch (\Exception $e) {
+            return ApiResponseType::sendJsonResponse(false, 'Error: ' . $e->getMessage());
+        }
     }
 }

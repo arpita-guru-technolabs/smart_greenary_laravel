@@ -33,6 +33,9 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SystemUserController;
 use App\Http\Controllers\TaxClassController;
 use App\Http\Controllers\TaxRateController;
+use App\Http\Controllers\AddonGroupController;
+use App\Http\Controllers\StoreProductVariantAddonController;
+use App\Http\Controllers\StoreAddonItemController;
 use App\Http\Controllers\Admin\WalletTransactionController;
 use App\Http\Controllers\Admin\VendorTypeController;
 use App\Http\Controllers\Admin\ImpersonationController;
@@ -230,7 +233,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         // seller stores
-        Route::prefix('sellers/store')->name('sellers.store.')->group(function () {
+        /*Route::prefix('sellers/store')->name('sellers.store.')->group(function () {
             Route::get('/', [StoreController::class, 'index'])->name('index');
             Route::get('/', [StoreController::class, 'index'])->name('index');
             Route::get('/datatable', [StoreController::class, 'getStores'])->name('datatable');
@@ -238,7 +241,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/view/{id}', [StoreController::class, 'index'])->name('show.index');
             Route::get('/{id}', [StoreController::class, 'show'])->name('show');
             Route::post('/{id}/verify', [StoreController::class, 'verify'])->name('verify');
+        });*/
+
+         Route::prefix('stores')->name('stores.')->group(function () {
+            Route::get('/', [StoreController::class, 'index'])->name('index');
+            Route::post('/', [StoreController::class, 'store'])->name('store');
+            Route::get('/create', [StoreController::class, 'create'])->name('create');
+            Route::get('/{id}/edit', [StoreController::class, 'edit'])->name('edit');
+            Route::post('/{id}', [StoreController::class, 'update'])->name('update');
+            Route::delete('/{id}', [StoreController::class, 'destroy'])->name('delete');
+            Route::get('/datatable', [StoreController::class, 'getStores'])->name('datatable');
+            Route::get('/list', [StoreController::class, 'StoreList'])->name('storesList');
+            Route::get('/search', [StoreController::class, 'search'])->name('search');
+            Route::get('/{id}/configuration', [StoreController::class, 'configuration'])->name('configuration');
+            Route::post('/{id}/configuration', [StoreController::class, 'storeConfiguration'])->name('store_configuration');
+            Route::post('/{id}/update-status', [StoreController::class, 'updateStatus'])->name('update-status');
+
+            Route::post('/{id}/toggle-visibility', [StoreController::class, 'toggleVisibility'])->name('admin.stores.toggle-visibility');
         });
+
 
         // product Faqs
         Route::prefix('faqs')->name('faqs.')->group(function () {
@@ -411,7 +432,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         // products
-        Route::prefix('products')->name('products.')->group(function () {
+       /* Route::prefix('products')->name('products.')->group(function () {
             Route::get('/', [ProductController::class, 'index'])->name('index');
             Route::get('/datatable', [ProductController::class, 'getProducts'])->name('datatable');
             Route::get('/search', [ProductController::class, 'search'])->name('search');
@@ -420,14 +441,94 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/{id}/verification-status', [ProductController::class, 'updateVerificationStatus'])->name('update-verification-status');
             Route::post('/{id}/update-status', [ProductController::class, 'updateStatus'])->name('update-status');
             Route::get('/{id}', [ProductController::class, 'show'])->name('show');
-        });
+        });*/
 
+        // products
+            Route::prefix('products')->name('products.')->group(function () {
+                Route::get('/', [ProductController::class, 'index'])->name('index');
+                Route::get('/create', [ProductController::class, 'create'])->name('create');
+                Route::post('/', [ProductController::class, 'store'])->name('store');
+                Route::get('/datatable', [ProductController::class, 'getProducts'])->name('datatable');
+                Route::get('/search', [ProductController::class, 'search'])->name('search');
+                Route::get('/download-template', [ProductController::class, 'downloadTemplate'])->name('download-template');
+                // Bulk upload (Shopify-like CSV)
+                Route::get('/bulk-upload', [ProductController::class, 'bulkUploadPage'])->name('bulk-upload.page');
+                Route::post('/bulk-upload', [ProductController::class, 'bulkUpload'])->name('bulk-upload');
+                // Separate images ZIP upload for products/variants
+                Route::get('/images-upload', [ProductImageUploadController::class, 'imagesUploadPage'])->name('images-upload.page');
+                Route::post('/images-upload', [ProductImageUploadController::class, 'imagesUpload'])->name('images-upload');
+                Route::get('/images-upload/status/{token}', [ProductImageUploadController::class, 'imagesUploadStatus'])->name('images-upload.status');
+                Route::get('/{id}/edit', [ProductController::class, 'edit'])->name('edit');
+                Route::get('/{id}/pricing', [ProductController::class, 'getProductPricing'])->name('pricing');
+                Route::post('/{id}', [ProductController::class, 'update'])->name('update');
+                Route::post('/{id}/update-status', [ProductController::class, 'updateStatus'])->name('update-status');
+                Route::delete('/{id}', [ProductController::class, 'destroy'])->name('delete');
+                Route::get('/{id}', [ProductController::class, 'show'])->name('show');
+            });
+
+
+            // addon groups
+            Route::prefix('addon-groups')->name('addon-groups.')->group(function () {
+                Route::get('/', [AddonGroupController::class, 'index'])->name('index');
+                Route::get('/datatable', [AddonGroupController::class, 'datatable'])->name('datatable');
+                Route::get('/create', [AddonGroupController::class, 'create'])->name('create');
+                Route::post('/', [AddonGroupController::class, 'store'])->name('store');
+                Route::get('/{id}/edit', [AddonGroupController::class, 'edit'])->whereNumber('id')->name('edit');
+                Route::post('/{id}', [AddonGroupController::class, 'update'])->whereNumber('id')->name('update');
+                Route::delete('/{id}', [AddonGroupController::class, 'destroy'])->whereNumber('id')->name('delete');
+            });
+
+
+            // product addon attachments
+            Route::prefix('product-addons')->name('product-addons.')->group(function () {
+                Route::get('/', [StoreProductVariantAddonController::class, 'index'])->name('index');
+                Route::get('/datatable', [StoreProductVariantAddonController::class, 'datatable'])->name('datatable');
+                Route::get('/create', [StoreProductVariantAddonController::class, 'create'])->name('create');
+                Route::post('/', [StoreProductVariantAddonController::class, 'store'])->name('store');
+
+                // AJAX lookups used by the form
+                Route::get('/lookup/products', [StoreProductVariantAddonController::class, 'productLookup'])->name('lookup.products');
+                Route::get('/lookup/products/{product}/variants', [StoreProductVariantAddonController::class, 'variantLookup'])->whereNumber('product')->name('lookup.variants');
+                Route::get('/lookup/variants-bulk', [StoreProductVariantAddonController::class, 'variantsBulkLookup'])->name('lookup.variants-bulk');
+                Route::get('/lookup/addon-groups', [StoreProductVariantAddonController::class, 'addonGroupLookup'])->name('lookup.addon-groups');
+                Route::get('/matrix/{variant}/{group}', [StoreProductVariantAddonController::class, 'matrix'])->whereNumber('variant')->whereNumber('group')->name('matrix');
+
+                Route::get('/{variant}/{group}/edit', [StoreProductVariantAddonController::class, 'edit'])->whereNumber('variant')->whereNumber('group')->name('edit');
+                Route::post('/{variant}/{group}', [StoreProductVariantAddonController::class, 'update'])->whereNumber('variant')->whereNumber('group')->name('update');
+                Route::delete('/{variant}/{group}', [StoreProductVariantAddonController::class, 'destroy'])->whereNumber('variant')->whereNumber('group')->name('delete');
+            });
+
+
+            // store addon inventory
+            Route::prefix('store-addon-items')->name('store-addon-items.')->group(function () {
+                Route::get('/', [StoreAddonItemController::class, 'index'])->name('index');
+                Route::get('/create', [StoreAddonItemController::class, 'create'])->name('create');
+                Route::get('/datatable', [StoreAddonItemController::class, 'datatable'])->name('datatable');
+                Route::get('/lookup/groups/{groupId}/items', [StoreAddonItemController::class, 'itemsForGroup'])->whereNumber('groupId')->name('items-for-group');
+                Route::get('/lookup/state', [StoreAddonItemController::class, 'inventoryState'])->name('state');
+                Route::get('/lookup/state-matrix', [StoreAddonItemController::class, 'inventoryStateMatrix'])->name('state-matrix');
+                Route::get('/{id}', [StoreAddonItemController::class, 'show'])->whereNumber('id')->name('show');
+                Route::post('/', [StoreAddonItemController::class, 'store'])->name('store');
+                Route::post('/bulk', [StoreAddonItemController::class, 'bulkStore'])->name('bulk-store');
+                Route::post('/{id}', [StoreAddonItemController::class, 'update'])->whereNumber('id')->name('update');
+                Route::delete('/{id}', [StoreAddonItemController::class, 'destroy'])->whereNumber('id')->name('delete');
+            });
+
+            // product Faqs
+            Route::prefix('product-faqs')->name('product_faqs.')->group(function () {
+                Route::get('/', [ProductFaqController::class, 'index'])->name('index');
+                Route::post('/', [ProductFaqController::class, 'store'])->name('store');
+                Route::get('/{id}/edit', [ProductFaqController::class, 'edit'])->name('edit');
+                Route::post('/{id}', [ProductFaqController::class, 'update'])->name('update');
+                Route::delete('/{id}', [ProductFaqController::class, 'destroy'])->name('delete');
+                Route::get('/datatable', [ProductFaqController::class, 'getProductFaqs'])->name('datatable');
+            });
 
         // product Faqs
-        Route::prefix('product-faqs')->name('product_faqs.')->group(function () {
+      /*  Route::prefix('product-faqs')->name('product_faqs.')->group(function () {
             Route::get('/', [ProductFaqController::class, 'index'])->name('index');
             Route::get('/datatable', [ProductFaqController::class, 'getProductFaqs'])->name('datatable');
 //            Route::get('/search', [ProductFaqController::class, 'search'])->name('search');
-        });
+        });*/
     });
 });

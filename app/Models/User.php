@@ -52,6 +52,8 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'email_verified_at',
         'mobile_verified_at',
         'logged_in_type',
+        'seller_otp',
+        'seller_otp_expires_at',
     ];
 
     protected function casts(): array
@@ -73,6 +75,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
             'logged_in_type' => UserLoginTypeEnum::class,
             'iso_2' => 'string',
             'country' => 'string',
+            'seller_otp_expires_at' => 'datetime', 
         ];
     }
 
@@ -84,6 +87,14 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function getDefaultGuardName(): string
     {
         return GuardNameEnum::fromString($this->access_panel->value)->value;
+    }
+
+    /**
+     * Get the seller record directly (fallback method)
+     */
+    public function getSeller()
+    {
+        return Seller::where('user_id', $this->id)->first();
     }
 
     /**
@@ -246,5 +257,42 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         static::deleting(function ($user) {
             $user->clearMediaCollection(SpatieMediaCollectionName::PROFILE_IMAGE());
         });
+    }
+
+    /**
+     * Generate seller OTP and store in database
+     */
+    public function generateSellerOtp(): string
+    {
+        $otp = str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
+        
+        $this->update([
+            'seller_otp' => $otp,
+            'seller_otp_expires_at' => now()->addMinutes(10),
+        ]);
+        
+        return $otp;
+    }
+
+    /**
+     * Verify seller OTP
+     */
+    public function verifySellerOtp(string $otp): bool
+    {
+        if ($this->seller_otp !== $otp) {
+            return false;
+        }
+        
+        if ($this->seller_otp_expires_at && $this->seller_otp_expires_at->isPast()) {
+            return false;
+        }
+        
+        $this->update([
+            'email_verified_at' => now(),
+            'seller_otp' => null,
+            'seller_otp_expires_at' => null,
+        ]);
+        
+        return true;
     }
 }

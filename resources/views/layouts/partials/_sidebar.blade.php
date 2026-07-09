@@ -77,6 +77,14 @@
                         // Determine if the menu item has sub-routes (dropdown) or a single link.
                         $isDropdown = is_array($item['route']);
                         $isActive = isset($page, $item['active']) && $page === $item['active'];
+
+
+                           // ===== TO HIDE DELIVERY BOYS MENU =====
+                            if ($key === 'delivery_boy_management') {
+                                continue;
+                            }
+                            // ====================================
+
                         // Hide entire subscription module when system is Single Vendor (both admin and seller panels)
                         if (Setting::isSystemVendorTypeSingle() && $key === 'subscriptions') {
                             continue;

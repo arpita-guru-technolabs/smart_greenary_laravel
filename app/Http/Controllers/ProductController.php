@@ -65,6 +65,13 @@ class ProductController extends Controller
         } elseif ($this->getPanel() === 'admin') {
             $this->viewPermission = $this->hasPermission(AdminPermissionEnum::PRODUCT_VIEW());
             $this->updateStatusPermission = $this->hasPermission(AdminPermissionEnum::PRODUCT_STATUS_UPDATE());
+
+              // ===== ADD THESE LINES =====
+            $this->createPermission = $this->hasPermission(AdminPermissionEnum::PRODUCT_CREATE());
+            $this->editPermission = $this->hasPermission(AdminPermissionEnum::PRODUCT_EDIT());
+            $this->deletePermission = $this->hasPermission(AdminPermissionEnum::PRODUCT_DELETE());
+            // ===========================
+
         }
     }
 
@@ -655,7 +662,8 @@ class ProductController extends Controller
                 'title' => $product->title,
                 'status' => $product->status,
                 'mode' => 'page_view',
-                'route' => route('seller.products.edit', ['id' => $product->id]),
+                //'route' => route('seller.products.edit', ['id' => $product->id]),
+                'route' => route($this->panelView('products.edit'), ['id' => $product->id]),
                 'viewRoute' => route($this->panelView('products.show'), ['id' => $product->id]),
                 'editPermission' => $this->editPermission,
                 'deletePermission' => $this->deletePermission,

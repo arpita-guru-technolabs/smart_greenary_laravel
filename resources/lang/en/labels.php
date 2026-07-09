@@ -2429,4 +2429,51 @@ return [
     'order_creation_failed' => 'Order creation failed',
     'amount' => 'Amount',
     'view' => 'View',
+
+
+    // Seller Registration Labels
+    'create_seller_account' => 'Create Seller Account',
+   // 'full_name' => 'Full Name',
+    'enter_full_name' => 'Enter your full name',
+    'phone_number' => 'Phone Number',
+    'enter_phone_number' => 'Enter phone number',
+    //'confirm_password' => 'Confirm Password',
+    'accept_terms' => 'I accept the terms and conditions',
+    'already_have_account' => 'Already have an account?',
+    'sign_in' => 'Sign In',
+    'register' => 'Register',
+    'account_created_successfully' => 'Account created successfully!',
+    'registration_success' => 'Registration Successful',
+    'account_created' => 'Account Created!',
+    'account_created_success_message' => 'Your account has been created successfully. Please wait for admin approval before you can login.',
+    'verification_needed' => 'Approval Required',
+    'verification_needed_message' => 'Your account needs to be approved by an admin. You will receive a notification once your account is approved.',
+    'back_to_login' => 'Back to Login',
+   /* 'account_not_verified' => 'Your account is not approved. Please wait for admin approval.',
+    'registration_failed' => 'Registration failed. Please try again.',
+    'copy_and_fill' => 'Copy & Fill',
+    'demo_credentials' => 'Demo Credentials',
+    'seller_credentials' => 'Seller Credentials',
+    'demo_mode' => 'Demo Mode',
+    'email' => 'Email',
+    'password' => 'Password',
+    'logout_successful' => 'Logout successful',
+    'logout_failed' => 'Logout failed',
+    'invalid_credentials' => 'Invalid email or password.',
+    'account_deleted_successfully' => 'Account Deleted Successfully',
+    'role' => 'Role',
+    'user_created' => 'User created',*/
+
+
+    // OTP Labels
+    'verify_otp' => 'Verify OTP',
+    'enter_otp' => 'Enter OTP',
+    'otp_sent_to' => 'OTP sent to',
+    'resend_otp' => 'Resend OTP',
+    'verify' => 'Verify',
+    //'invalid_otp' => 'Invalid or expired OTP. Please try again.',
+    'otp_resent_successfully' => 'OTP resent successfully!',
+    'back_to_register' => 'Back to Register',
+    'account_not_approved' => 'Your account is not approved by admin yet.',
+
 ];
