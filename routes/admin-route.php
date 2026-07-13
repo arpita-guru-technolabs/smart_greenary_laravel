@@ -164,7 +164,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/{id}', [SellerController::class, 'update'])->name('update');
             Route::delete('/{id}', [SellerController::class, 'destroy'])->name('delete');
             Route::get('/datatable', [SellerController::class, 'getSellers'])->name('datatable');
-            Route::get('/search', [SellerController::class, 'search'])->name('search')->name('search');
+            Route::get('/search', [SellerController::class, 'search'])->/*name('search')->*/name('search');
         });
 
         // subscription plans

@@ -65,7 +65,7 @@
                                                 <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
                                             </svg>
                                             {{ __('labels.refresh') }}
-                                        </button>
+                                        </button> 
                                     </div>
                                 </div>
                             </div>

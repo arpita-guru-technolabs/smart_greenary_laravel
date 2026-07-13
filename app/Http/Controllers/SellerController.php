@@ -327,7 +327,8 @@ class SellerController extends Controller
                 'mobile' => $demo ? Str::mask($mobile, '****', 3, 4) : $mobile,
                 'verification_status' => view('partials.status', ['status' => $seller->verification_status])->render(),
                 'visibility_status' => view('partials.status', ['status' => $seller->visibility_status])->render(),
-                'stores' => '<a href="' . route('admin.sellers.store.show.index', ['id' => $seller->id]) . '" class="' . ($stores_count <= 0 ? 'pointer-events-none' : '') . '"><span class="badge bg-info-lt text-uppercase">' . $stores_count . " " . ($stores_count > 1 ? __('labels.stores') : __('labels.store')) . '</span></a>',
+                //'stores' => '<a href="' . route('admin.sellers.store.show.index', ['id' => $seller->id]) . '" class="' . ($stores_count <= 0 ? 'pointer-events-none' : '') . '"><span class="badge bg-info-lt text-uppercase">' . $stores_count . " " . ($stores_count > 1 ? __('labels.stores') : __('labels.store')) . '</span></a>',
+                'stores' => '<span class="badge bg-info-lt text-uppercase">' . $stores_count . " " . ($stores_count > 1 ? __('labels.stores') : __('labels.store')) . '</span>',
                 'plan' => $seller->activeSubscription?->plan?->name ?? 'N/A',
                 'created_at' => $seller->created_at->toDateTimeString(),
                 'action' => view('partials.actions', [
