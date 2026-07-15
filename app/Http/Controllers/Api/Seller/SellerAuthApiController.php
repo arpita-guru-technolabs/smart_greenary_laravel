@@ -36,13 +36,13 @@ class SellerAuthApiController
     public function createSeller(StoreSellerRequest $request): JsonResponse
     {
         // Restrict seller self-registration in Single Vendor mode
-        if (Setting::isSystemVendorTypeSingle()) {
-            return ApiResponseType::sendJsonResponse(
-                success: false,
-                message: __('labels.seller_registration_disabled'),
-                status: 403
-            );
-        }
+        // if (Setting::isSystemVendorTypeSingle()) {
+        //     return ApiResponseType::sendJsonResponse(
+        //         success: false,
+        //         message: __('labels.seller_registration_disabled'),
+        //         status: 403
+        //     );
+        // }
 
         try {
             $validated = $request->validated();
