@@ -992,6 +992,96 @@ function setLocation(lat, lng) {
 // ============================================
 // CONFIRM LOCATION
 // ============================================
+// function confirmLocation() {
+//     if (!selectedLat || !selectedLng) {
+//         alert('Please select a location on the map first.');
+//         return;
+//     }
+    
+//     geocoder.geocode({ location: { lat: selectedLat, lng: selectedLng } }, function(results, status) {
+//         if (status === 'OK' && results.length > 0) {
+//             const result = results[0];
+//             const addressComponents = result.address_components;
+            
+//             let street = '', city = '', state = '', zipcode = '', country = '', landmark = '';
+            
+//             addressComponents.forEach(component => {
+//                 const types = component.types;
+                
+//                 if (types.includes('street_number')) {
+//                     street = component.long_name + ' ' + street;
+//                 }
+//                 if (types.includes('route')) {
+//                     street = street + component.long_name;
+//                 }
+//                 if (types.includes('locality') || types.includes('sublocality') || types.includes('administrative_area_level_3')) {
+//                     city = component.long_name;
+//                 }
+//                 if (types.includes('administrative_area_level_1')) {
+//                     state = component.long_name;
+//                 }
+//                 if (types.includes('postal_code')) {
+//                     zipcode = component.long_name;
+//                 }
+//                 if (types.includes('country')) {
+//                     country = component.long_name;
+//                 }
+//                 if (types.includes('sublocality_level_1') || types.includes('neighborhood')) {
+//                     landmark = component.long_name;
+//                 }
+//             });
+            
+//             if (!landmark && result.formatted_address) {
+//                 const parts = result.formatted_address.split(',');
+//                 if (parts.length > 0) {
+//                     landmark = parts[0].trim();
+//                 }
+//             }
+            
+//             if (!street) {
+//                 street = result.formatted_address;
+//             }
+            
+//             document.getElementById('address').value = street;
+//             document.getElementById('city').value = city || '';
+//             document.getElementById('state').value = state || '';
+//             document.getElementById('zipcode').value = zipcode || '';
+//             document.getElementById('country').value = country || '';
+//             document.getElementById('landmark').value = landmark || '';
+//             document.getElementById('latitude').value = selectedLat;
+//             document.getElementById('longitude').value = selectedLng;
+            
+//             saveAddressToSession();
+//             closeMapModal();
+            
+//             const successDiv = document.createElement('div');
+//             successDiv.className = 'alert alert-success alert-dismissible mt-3';
+//             successDiv.innerHTML = `
+//                 <div class="d-flex">
+//                     <div>
+//                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon alert-icon">
+//                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+//                             <path d="M5 12l5 5l10 -10" />
+//                         </svg>
+//                     </div>
+//                     <div>Location selected successfully! Address details have been filled.</div>
+//                 </div>
+//                 <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+//             `;
+            
+//             const mapButtons = document.querySelector('.d-flex.gap-2');
+//             if (mapButtons) {
+//                 mapButtons.parentNode.insertBefore(successDiv, mapButtons.nextSibling);
+//             }
+            
+//         } else {
+//             alert('Could not fetch address details. Please try again.');
+//         }
+//     });
+// }
+// ============================================
+// CONFIRM LOCATION
+// ============================================
 function confirmLocation() {
     if (!selectedLat || !selectedLng) {
         alert('Please select a location on the map first.');
@@ -1054,6 +1144,9 @@ function confirmLocation() {
             saveAddressToSession();
             closeMapModal();
             
+            // ============================================
+            // ✅ UPDATED: Insert success message BEFORE the form
+            // ============================================
             const successDiv = document.createElement('div');
             successDiv.className = 'alert alert-success alert-dismissible mt-3';
             successDiv.innerHTML = `
@@ -1069,9 +1162,9 @@ function confirmLocation() {
                 <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
             `;
             
-            const mapButtons = document.querySelector('.d-flex.gap-2');
-            if (mapButtons) {
-                mapButtons.parentNode.insertBefore(successDiv, mapButtons.nextSibling);
+            const form = document.querySelector('form');
+            if (form) {
+                form.parentNode.insertBefore(successDiv, form);
             }
             
         } else {
