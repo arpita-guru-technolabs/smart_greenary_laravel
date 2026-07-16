@@ -16,51 +16,7 @@
                 </div>
                 <div class="card card-md">
                     <div class="card-body">
-                        
-                        <!-- ============================================ -->
-                        <!-- STEP PROGRESS INDICATOR - Like Mobile App -->
-                        <!-- ============================================ -->
-                        <div class="mb-4">
-                            <div class="row g-0 text-center align-items-center">
-                                <!-- Step 1 - Active -->
-                                <div class="col">
-                                    <div class="d-flex align-items-center justify-content-center gap-2">
-                                        <span class="badge rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px; font-weight: 600;">1</span>
-                                        <span class="fw-bold text-primary" style="font-size: 13px;">Personal Info</span>
-                                    </div>
-                                </div>
-                                <!-- Line -->
-                                <div class="col-auto px-1">
-                                    <div style="width: 30px; height: 2px; background: #dee2e6;"></div>
-                                </div>
-                                <!-- Step 2 - Inactive -->
-                                <div class="col">
-                                    <div class="d-flex align-items-center justify-content-center gap-2">
-                                        <span class="badge rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px; font-weight: 600;">2</span>
-                                        <span class="text-secondary" style="font-size: 13px;">Documents</span>
-                                    </div>
-                                </div>
-                                <!-- Line -->
-                                <div class="col-auto px-1">
-                                    <div style="width: 30px; height: 2px; background: #dee2e6;"></div>
-                                </div>
-                                <!-- Step 3 - Inactive -->
-                                <div class="col">
-                                    <div class="d-flex align-items-center justify-content-center gap-2">
-                                        <span class="badge rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px; font-weight: 600;">3</span>
-                                        <span class="text-secondary" style="font-size: 13px;">Address</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Progress Bar -->
-                            <div class="progress mt-2" style="height: 4px;">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 33%;"></div>
-                            </div>
-                        </div>
-
-                        <h2 class="h2 text-center mb-4">Create Farmer Account</h2>
-                        
-                        <!-- Flash Messages -->
+                        {{-- Success/Error Flash Messages Only --}}
                         @if(session('success'))
                             <div class="alert alert-success alert-dismissible" role="alert">
                                 <div class="d-flex">
@@ -92,49 +48,51 @@
                             </div>
                         @endif
                         
+                        <h2 class="h2 text-center mb-4">Create Farmer Account</h2>
+                        
                         <form id="register-form" action="{{route('seller.register.post')}}" method="post" autocomplete="off" novalidate>
                             @csrf
                             
                             <!-- Name Field -->
-                           <div class="mb-3">
+                            <div class="mb-3">
                                 <label class="form-label required">{{ __('labels.full_name') }}</label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                    name="name" id="name" placeholder="{{ __('labels.enter_full_name') }}" 
-                                    value="{{ old('name', $user->name ?? '') }}" required/>
+                                       name="name" id="name" placeholder="{{ __('labels.enter_full_name') }}" 
+                                       value="{{ old('name') }}" required/>
                                 <div class="invalid-feedback" id="name-error">
                                     @error('name'){{ $message }}@enderror
                                 </div>
                             </div>
                             
                             <!-- Email Field -->
-                           <div class="mb-3">
-                                <label class="form-label required">Email ID</label>
+                            <div class="mb-3">
+                                <label class="form-label required">{{ __('labels.email_address') }}</label>
                                 <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                    name="email" id="email" placeholder="your@email.com" 
-                                    value="{{ old('email', $user->email ?? '') }}" required/>
+                                       name="email" id="email" placeholder="your@email.com" 
+                                       value="{{ old('email') }}" required/>
                                 <div class="invalid-feedback" id="email-error">
                                     @error('email'){{ $message }}@enderror
                                 </div>
                             </div>
                             
                             <!-- Phone Field -->
-                           <div class="mb-3">
-                            <label class="form-label required">{{ __('labels.phone_number') }}</label>
-                            <input type="text" class="form-control @error('phone') is-invalid @enderror" 
-                                name="phone" id="phone" placeholder="{{ __('labels.enter_phone_number') }}" 
-                                value="{{ old('phone', $user->mobile ?? '') }}" required/>
-                            <div class="invalid-feedback" id="phone-error">
-                                @error('phone'){{ $message }}@enderror
+                            <div class="mb-3">
+                                <label class="form-label required">{{ __('labels.phone_number') }}</label>
+                                <input type="text" class="form-control @error('phone') is-invalid @enderror" 
+                                       name="phone" id="phone" placeholder="{{ __('labels.enter_phone_number') }}" 
+                                       value="{{ old('phone') }}" required/>
+                                <div class="invalid-feedback" id="phone-error">
+                                    @error('phone'){{ $message }}@enderror
+                                </div>
                             </div>
-                        </div>
                             
-                          <!-- Password Field -->
+                            <!-- Password Field -->
                             <div class="mb-3">
                                 <label class="form-label required">{{ __('labels.password') }}</label>
                                 <div class="input-group input-group-flat">
                                     <input type="password" class="form-control @error('password') is-invalid @enderror" 
-                                        name="password" id="password" placeholder="{{ __('labels.enter_password') }}" 
-                                        {{ !$user || !$user->id ? 'required' : '' }}/>
+                                           name="password" id="password" placeholder="{{ __('labels.enter_password') }}" 
+                                           required/>
                                     <span class="input-group-text">
                                         <a href="#" class="link-secondary" title="Show password" id="password-toggle" data-bs-toggle="tooltip">Show</a>
                                     </span>
@@ -146,21 +104,20 @@
                                     Password must be at least 8 characters, including uppercase, lowercase, number, and special character (@, $, !, %, *, ?, &)
                                 </small>
                             </div>
-
-                        <!-- Confirm Password Field -->
-                        <div class="mb-3">
-                            <label class="form-label required">{{ __('labels.confirm_password') }}</label>
-                            <div class="input-group input-group-flat">
-                                <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" 
-                                    name="password_confirmation" id="password_confirmation" 
-                                    placeholder="{{ __('labels.confirm_password') }}"
-                                    {{ !$user || !$user->id ? 'required' : '' }}/>
+                            
+                            <!-- Confirm Password Field -->
+                            <div class="mb-3">
+                                <label class="form-label required">{{ __('labels.confirm_password') }}</label>
+                                <div class="input-group input-group-flat">
+                                    <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" 
+                                           name="password_confirmation" id="password_confirmation" 
+                                           placeholder="{{ __('labels.confirm_password') }}" required/>
+                                </div>
+                                <div class="invalid-feedback" id="password_confirmation-error" style="display: block;">
+                                    @error('password_confirmation'){{ $message }}@enderror
+                                </div>
                             </div>
-                            <div class="invalid-feedback" id="password_confirmation-error" style="display: block;">
-                                @error('password_confirmation'){{ $message }}@enderror
-                            </div>
-                        </div>
-                                                    
+                            
                             <!-- Terms Field -->
                             <div class="mb-3">
                                 <label class="form-check">
@@ -174,9 +131,7 @@
                             </div>
                             
                             <div class="form-footer">
-                                <button type="submit" class="btn btn-primary w-100" id="submit-btn">
-                                    Next →
-                                </button>
+                                <button type="submit" class="btn btn-primary w-100" id="submit-btn">{{ __('labels.register') }}</button>
                             </div>
                         </form>
                         

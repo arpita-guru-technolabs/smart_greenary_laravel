@@ -48,11 +48,19 @@ Route::prefix('seller')->name('seller.')->group(function () {
 
         Route::get('register/success', [AuthController::class, 'registrationSuccess'])->name('register.success');
 
+        // Add these routes after your existing routes
+        Route::get('register/documents', [AuthController::class, 'showDocuments'])->name('register.documents');
+        Route::post('register/documents', [AuthController::class, 'uploadDocuments'])->name('register.upload.documents');
+        Route::get('register/address', [AuthController::class, 'showAddress'])->name('register.address');
+        Route::post('register/address', [AuthController::class, 'saveAddress'])->name('register.save.address');
+
         // Password Reset Routes
         Route::get('forgot-password', [PasswordResetController::class, 'showForgotPasswordForm'])->name('password.request');
         Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
         Route::get('reset-password/{token}', [PasswordResetController::class, 'showResetPasswordForm'])->name('password.reset');
         Route::post('reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.update');
+
+        Route::post('register/save-address-session', [AuthController::class, 'saveAddressToSession'])->name('register.save.address.session');
     });
 
     Route::middleware(['seller.query.token', 'validate.seller',

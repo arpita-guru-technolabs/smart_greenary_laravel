@@ -32,7 +32,7 @@
                                 <a class="nav-link" href="#pills-basic">{{ __('labels.basic_details') }}</a>
                                 <a class="nav-link" href="#pills-location">{{ __('labels.location_details') }}</a>
                                 <a class="nav-link" href="#pills-documents">{{ __('labels.business_documents') }}</a>
-                                <a class="nav-link" href="#pills-status">{{ __('labels.status_and_metadata') }}</a>
+                                <a class="nav-link" href="#pills-status">Verification & Visibility Status</a>
                             </nav>
                         </div>
                     </div>
@@ -281,7 +281,7 @@
                                     </div>
                                     <div class="card mb-4" id="pills-status">
                                         <div class="card-header">
-                                            <h4 class="card-title">{{ __('labels.status_and_metadata') }}</h4>
+                                            <h4 class="card-title">Verification & Visibilty Status</h4>
                                         </div>
                                         <div class="card-body">
                                             <div class="mb-3">
@@ -303,7 +303,7 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            <div class="mb-3">
+                                            {{-- <div class="mb-3">
                                                 <label class="form-label required">{{ __('labels.metadata') }}</label>
                                                 <textarea class="form-control @error('metadata') is-invalid @enderror"
                                                           name="metadata"
@@ -311,7 +311,7 @@
                                                 @error('metadata')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
-                                            </div>
+                                            </div> --}}
                                             <div class="mb-3">
                                                 <label
                                                     class="form-label required">{{ __('labels.visibility_status') }}</label>

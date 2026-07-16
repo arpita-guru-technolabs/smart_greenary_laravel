@@ -1,0 +1,663 @@
+{{-- @extends('layouts.seller.guest')
+
+@section('title', 'Address Details - Step 3')
+@section('content')
+<div>
+    <div class="page page-center">
+        <div class="container container-tight py-4">
+            <div class="text-center mb-4">
+                <a href="." class="navbar-brand navbar-brand-autodark">
+                    @if(($systemSettings['demoMode'] ?? false))
+                        <img src="{{asset('logos/hyper-local-logo.png')}}" alt="{{$systemSettings['appName'] ?? ""}}" width="150px">
+                    @else
+                        <img src="{{!empty($systemSettings['logo'])?$systemSettings['logo'] : asset('logos/hyper-local-logo.png')}}" alt="{{$systemSettings['appName'] ?? ""}}" width="150px">
+                    @endif
+                </a>
+            </div>
+            <div class="card card-md">
+                <div class="card-body">
+                    
+                    <!-- ============================================ -->
+                    <!-- STEP PROGRESS INDICATOR - Like Mobile App -->
+                    <!-- ============================================ -->
+                    <div class="mb-4">
+                        <div class="row g-0 text-center align-items-center">
+                            <!-- Step 1 - Complete -->
+                            <div class="col">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <span class="badge rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px; font-weight: 600;">✓</span>
+                                    <span class="fw-bold text-success" style="font-size: 13px;">Personal Info</span>
+                                </div>
+                            </div>
+                            <!-- Line -->
+                            <div class="col-auto px-1">
+                                <div style="width: 30px; height: 2px; background: #28a745;"></div>
+                            </div>
+                            <!-- Step 2 - Complete -->
+                            <div class="col">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <span class="badge rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px; font-weight: 600;">✓</span>
+                                    <span class="fw-bold text-success" style="font-size: 13px;">Documents</span>
+                                </div>
+                            </div>
+                            <!-- Line -->
+                            <div class="col-auto px-1">
+                                <div style="width: 30px; height: 2px; background: #28a745;"></div>
+                            </div>
+                            <!-- Step 3 - Active -->
+                            <div class="col">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <span class="badge rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px; font-weight: 600;">3</span>
+                                    <span class="fw-bold text-primary" style="font-size: 13px;">Address</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="progress mt-2" style="height: 4px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 100%;"></div>
+                        </div>
+                    </div>
+
+                    <h2 class="h2 text-center mb-4">Address Details</h2>
+                    
+                    <!-- Flash Messages -->
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            <div class="d-flex">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon alert-icon">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M5 12l5 5l10 -10" />
+                                    </svg>
+                                </div>
+                                <div>{{ session('success') }}</div>
+                            </div>
+                            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+                        </div>
+                    @endif
+                    
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <div class="d-flex">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon alert-icon">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M12 9v4" />
+                                        <path d="M12 16h.01" />
+                                    </svg>
+                                </div>
+                                <div>{{ session('error') }}</div>
+                            </div>
+                            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+                        </div>
+                    @endif
+
+                    <form action="{{route('seller.register.save.address')}}" method="post" novalidate>
+                        @csrf
+                        <!-- Address Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">Address</label>
+                            <input type="text" class="form-control @error('address') is-invalid @enderror" 
+                                name="address" id="address" placeholder="123, Shree Complex, Station Road" 
+                                value="{{ old('address', $seller->address ?? '') }}" required/>
+                            @error('address')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- City Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">City</label>
+                            <input type="text" class="form-control @error('city') is-invalid @enderror" 
+                                name="city" id="city" placeholder="e.g. Bhuj" 
+                                value="{{ old('city', $seller->city ?? '') }}" required/>
+                            @error('city')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Landmark Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">Landmark</label>
+                            <input type="text" class="form-control @error('landmark') is-invalid @enderror" 
+                                name="landmark" id="landmark" placeholder="e.g. Near Bus Stand" 
+                                value="{{ old('landmark', $seller->landmark ?? '') }}" required/>
+                            @error('landmark')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- State Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">State</label>
+                            <input type="text" class="form-control @error('state') is-invalid @enderror" 
+                                name="state" id="state" placeholder="e.g. Gujarat" 
+                                value="{{ old('state', $seller->state ?? '') }}" required/>
+                            @error('state')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Zipcode Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">Zip Code</label>
+                            <input type="text" class="form-control @error('zipcode') is-invalid @enderror" 
+                                name="zipcode" id="zipcode" placeholder="e.g. 370001" 
+                                value="{{ old('zipcode', $seller->zipcode ?? '') }}" required/>
+                            @error('zipcode')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Country Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">Country</label>
+                            <input type="text" class="form-control @error('country') is-invalid @enderror" 
+                                name="country" id="country" placeholder="e.g. India" 
+                                value="{{ old('country', $seller->country ?? '') }}" required/>
+                            @error('country')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Latitude & Longitude -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Latitude</label>
+                                    <input type="text" class="form-control @error('latitude') is-invalid @enderror" 
+                                        name="latitude" id="latitude" placeholder="e.g. 23.241999" 
+                                        value="{{ old('latitude', $seller->latitude ?? '') }}"/>
+                                    @error('latitude')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Longitude</label>
+                                    <input type="text" class="form-control @error('longitude') is-invalid @enderror" 
+                                        name="longitude" id="longitude" placeholder="e.g. 69.666881" 
+                                        value="{{ old('longitude', $seller->longitude ?? '') }}"/>
+                                    @error('longitude')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ route('seller.register.documents') }}" class="btn btn-secondary">← Previous</a>
+                            <button type="submit" class="btn btn-success">Complete Registration</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection --}}
+
+
+@extends('layouts.seller.guest')
+
+@section('title', 'Address Details - Step 3')
+@section('content')
+<div>
+    <div class="page page-center">
+        <div class="container container-tight py-4">
+            <div class="text-center mb-4">
+                <a href="." class="navbar-brand navbar-brand-autodark">
+                    @if(($systemSettings['demoMode'] ?? false))
+                        <img src="{{asset('logos/hyper-local-logo.png')}}" alt="{{$systemSettings['appName'] ?? ""}}" width="150px">
+                    @else
+                        <img src="{{!empty($systemSettings['logo'])?$systemSettings['logo'] : asset('logos/hyper-local-logo.png')}}" alt="{{$systemSettings['appName'] ?? ""}}" width="150px">
+                    @endif
+                </a>
+            </div>
+            <div class="card card-md">
+                <div class="card-body">
+                    
+                    <!-- Step Progress Indicator -->
+                    <div class="mb-4">
+                        <div class="row g-0 text-center align-items-center">
+                            <div class="col">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <span class="badge rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px; font-weight: 600;">✓</span>
+                                    <span class="fw-bold text-success" style="font-size: 13px;">Personal Info</span>
+                                </div>
+                            </div>
+                            <div class="col-auto px-1">
+                                <div style="width: 30px; height: 2px; background: #28a745;"></div>
+                            </div>
+                            <div class="col">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <span class="badge rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px; font-weight: 600;">✓</span>
+                                    <span class="fw-bold text-success" style="font-size: 13px;">Documents</span>
+                                </div>
+                            </div>
+                            <div class="col-auto px-1">
+                                <div style="width: 30px; height: 2px; background: #28a745;"></div>
+                            </div>
+                            <div class="col">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <span class="badge rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px; font-weight: 600;">3</span>
+                                    <span class="fw-bold text-primary" style="font-size: 13px;">Address</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="progress mt-2" style="height: 4px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 100%;"></div>
+                        </div>
+                    </div>
+
+                    <h2 class="h2 text-center mb-4">Address Details</h2>
+                    
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            <div class="d-flex">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon alert-icon">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M5 12l5 5l10 -10" />
+                                    </svg>
+                                </div>
+                                <div>{{ session('success') }}</div>
+                            </div>
+                            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+                        </div>
+                    @endif
+                    
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            <div class="d-flex">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon alert-icon">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M12 9v4" />
+                                        <path d="M12 16h.01" />
+                                    </svg>
+                                </div>
+                                <div>{{ session('error') }}</div>
+                            </div>
+                            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+                        </div>
+                    @endif
+
+                    <!-- Auto Fetch & From Map Buttons -->
+                    <div class="mb-4">
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-primary flex-fill" id="autoFetchBtn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M3 12l5 -4l5 6l4 -4l5 4" />
+                                    <path d="M3 12v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2 -2v-6" />
+                                </svg>
+                                Auto Fetch
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary flex-fill" id="fromMapBtn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                                    <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" />
+                                </svg>
+                                From Map
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ✅ FIXED: Added seller. to route name -->
+                    <form action="{{route('seller.register.save.address')}}" method="post" novalidate>
+                        @csrf
+                        
+                        <!-- Address Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">Address</label>
+                            <input type="text" class="form-control @error('address') is-invalid @enderror" 
+                                name="address" id="address" placeholder="123, Shree Complex, Station Road" 
+                                value="{{ old('address', session('seller_registration.address_data.address', $seller->address ?? '')) }}" required/>
+                            @error('address')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- City Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">City</label>
+                            <input type="text" class="form-control @error('city') is-invalid @enderror" 
+                                name="city" id="city" placeholder="e.g. Bhuj" 
+                                value="{{ old('city', session('seller_registration.address_data.city', $seller->city ?? '')) }}" required/>
+                            @error('city')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Landmark Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">Landmark</label>
+                            <input type="text" class="form-control @error('landmark') is-invalid @enderror" 
+                                name="landmark" id="landmark" placeholder="e.g. Near Bus Stand" 
+                                value="{{ old('landmark', session('seller_registration.address_data.landmark', $seller->landmark ?? '')) }}" required/>
+                            @error('landmark')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- State Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">State</label>
+                            <input type="text" class="form-control @error('state') is-invalid @enderror" 
+                                name="state" id="state" placeholder="e.g. Gujarat" 
+                                value="{{ old('state', session('seller_registration.address_data.state', $seller->state ?? '')) }}" required/>
+                            @error('state')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Zipcode Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">Zip Code</label>
+                            <input type="text" class="form-control @error('zipcode') is-invalid @enderror" 
+                                name="zipcode" id="zipcode" placeholder="e.g. 370001" 
+                                value="{{ old('zipcode', session('seller_registration.address_data.zipcode', $seller->zipcode ?? '')) }}" required/>
+                            @error('zipcode')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Country Field -->
+                        <div class="mb-3">
+                            <label class="form-label required">Country</label>
+                            <input type="text" class="form-control @error('country') is-invalid @enderror" 
+                                name="country" id="country" placeholder="e.g. India" 
+                                value="{{ old('country', session('seller_registration.address_data.country', $seller->country ?? '')) }}" required/>
+                            @error('country')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Latitude & Longitude -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Latitude</label>
+                                    <input type="text" class="form-control @error('latitude') is-invalid @enderror" 
+                                        name="latitude" id="latitude" placeholder="e.g. 23.241999" 
+                                        value="{{ old('latitude', session('seller_registration.address_data.latitude', $seller->latitude ?? '')) }}" readonly/>
+                                    @error('latitude')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Longitude</label>
+                                    <input type="text" class="form-control @error('longitude') is-invalid @enderror" 
+                                        name="longitude" id="longitude" placeholder="e.g. 69.666881" 
+                                        value="{{ old('longitude', session('seller_registration.address_data.longitude', $seller->longitude ?? '')) }}" readonly/>
+                                    @error('longitude')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <!-- ✅ FIXED: Added seller. to route name -->
+                            <a href="{{ route('seller.register.documents') }}" class="btn btn-secondary" id="previousBtn">← Previous</a>
+                            <button type="submit" class="btn btn-success">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const autoFetchBtn = document.getElementById('autoFetchBtn');
+    const fromMapBtn = document.getElementById('fromMapBtn');
+    const previousBtn = document.getElementById('previousBtn');
+    
+    const addressInput = document.getElementById('address');
+    const cityInput = document.getElementById('city');
+    const landmarkInput = document.getElementById('landmark');
+    const stateInput = document.getElementById('state');
+    const zipcodeInput = document.getElementById('zipcode');
+    const countryInput = document.getElementById('country');
+    const latitudeInput = document.getElementById('latitude');
+    const longitudeInput = document.getElementById('longitude');
+
+    // ============================================
+    // SAVE ADDRESS TO SESSION BEFORE NAVIGATING BACK
+    // ============================================
+    previousBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const addressData = {
+            address: addressInput.value,
+            city: cityInput.value,
+            landmark: landmarkInput.value,
+            state: stateInput.value,
+            zipcode: zipcodeInput.value,
+            country: countryInput.value,
+            latitude: latitudeInput.value,
+            longitude: longitudeInput.value
+        };
+        
+        // ✅ FIXED: Added seller. to route name
+        fetch('{{ route("seller.register.save.address.session") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(addressData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.href = '{{ route("seller.register.documents") }}';
+        })
+        .catch(error => {
+            console.error('Error saving address:', error);
+            window.location.href = '{{ route("seller.register.documents") }}';
+        });
+    });
+
+    // ============================================
+    // AUTO FETCH
+    // ============================================
+    autoFetchBtn.addEventListener('click', function() {
+        if (navigator.geolocation) {
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Fetching...';
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    latitudeInput.value = lat;
+                    longitudeInput.value = lng;
+                    
+                    fetchAddressFromCoords(lat, lng);
+                    
+                    autoFetchBtn.disabled = false;
+                    autoFetchBtn.innerHTML = '✅ Location Fetched';
+                    autoFetchBtn.className = 'btn btn-success flex-fill';
+                },
+                function(error) {
+                    alert('Unable to get location. Please enter address manually.');
+                    autoFetchBtn.disabled = false;
+                    autoFetchBtn.innerHTML = 'Auto Fetch';
+                    autoFetchBtn.className = 'btn btn-outline-primary flex-fill';
+                },
+                { enableHighAccuracy: true }
+            );
+        } else {
+            alert('Geolocation is not supported by your browser.');
+        }
+    });
+
+    // ============================================
+    // FROM MAP
+    // ============================================
+    fromMapBtn.addEventListener('click', function() {
+        alert('Map feature coming soon! Please enter address manually or use Auto Fetch.');
+    });
+
+    // ============================================
+    // FETCH ADDRESS FROM COORDINATES
+    // ============================================
+    function fetchAddressFromCoords(lat, lng) {
+        const apiKey = '{{ env('GOOGLE_MAPS_API_KEY') }}';
+        
+        if (apiKey) {
+            fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'OK' && data.results.length > 0) {
+                        const result = data.results[0];
+                        const addressComponents = result.address_components;
+                        
+                        let street = '', city = '', state = '', zipcode = '', country = '', landmark = '';
+                        
+                        addressComponents.forEach(component => {
+                            const types = component.types;
+                            
+                            if (types.includes('street_number')) {
+                                street = component.long_name + ' ' + street;
+                            }
+                            if (types.includes('route')) {
+                                street = street + component.long_name;
+                            }
+                            if (types.includes('locality') || types.includes('sublocality') || types.includes('administrative_area_level_3')) {
+                                city = component.long_name;
+                            }
+                            if (types.includes('administrative_area_level_1')) {
+                                state = component.long_name;
+                            }
+                            if (types.includes('postal_code')) {
+                                zipcode = component.long_name;
+                            }
+                            if (types.includes('country')) {
+                                country = component.long_name;
+                            }
+                            if (types.includes('sublocality_level_1') || types.includes('neighborhood')) {
+                                landmark = component.long_name;
+                            }
+                        });
+                        
+                        if (!landmark && result.formatted_address) {
+                            const parts = result.formatted_address.split(',');
+                            if (parts.length > 0) {
+                                landmark = parts[0].trim();
+                            }
+                        }
+                        
+                        if (!street) {
+                            street = result.formatted_address;
+                        }
+                        
+                        addressInput.value = street;
+                        cityInput.value = city || '';
+                        stateInput.value = state || '';
+                        zipcodeInput.value = zipcode || '';
+                        countryInput.value = country || '';
+                        landmarkInput.value = landmark || '';
+                        
+                        saveAddressToSession();
+                        
+                    } else {
+                        alert('Could not fetch address details. Please enter manually.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Geocoding error:', error);
+                    alert('Error fetching address. Please enter manually.');
+                });
+        } else {
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        const address = data.address;
+                        
+                        addressInput.value = data.display_name;
+                        cityInput.value = address.city || address.town || address.village || address.county || '';
+                        stateInput.value = address.state || '';
+                        zipcodeInput.value = address.postcode || '';
+                        countryInput.value = address.country || '';
+                        
+                        if (data.display_name) {
+                            const parts = data.display_name.split(',');
+                            if (parts.length > 0) {
+                                landmarkInput.value = parts[0].trim();
+                            }
+                        }
+                        
+                        saveAddressToSession();
+                        
+                    } else {
+                        alert('Could not fetch address details. Please enter manually.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Geocoding error:', error);
+                    alert('Error fetching address. Please enter manually.');
+                });
+        }
+    }
+
+    // ============================================
+    // SAVE ADDRESS TO SESSION
+    // ============================================
+    function saveAddressToSession() {
+        const addressData = {
+            address: addressInput.value,
+            city: cityInput.value,
+            landmark: landmarkInput.value,
+            state: stateInput.value,
+            zipcode: zipcodeInput.value,
+            country: countryInput.value,
+            latitude: latitudeInput.value,
+            longitude: longitudeInput.value
+        };
+        
+        // ✅ FIXED: Added seller. to route name
+        fetch('{{ route("seller.register.save.address.session") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(addressData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Address saved to session:', data);
+        })
+        .catch(error => {
+            console.error('Error saving address to session:', error);
+        });
+    }
+
+    // ============================================
+    // AUTO SAVE ON INPUT CHANGE
+    // ============================================
+    const inputs = [addressInput, cityInput, landmarkInput, stateInput, zipcodeInput, countryInput];
+    inputs.forEach(input => {
+        input.addEventListener('change', function() {
+            saveAddressToSession();
+        });
+        input.addEventListener('blur', function() {
+            saveAddressToSession();
+        });
+    });
+});
+</script>
+@endpush
