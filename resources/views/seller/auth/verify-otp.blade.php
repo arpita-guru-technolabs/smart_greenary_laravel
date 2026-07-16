@@ -71,9 +71,9 @@
                                 </a>
                             </div>
 
-                            <div class="form-footer">
+                            {{-- <div class="form-footer">
                                 <button type="submit" class="btn btn-primary w-100">{{ __('labels.verify') }}</button>
-                            </div>
+                            </div> --}}
                         </form>
 
                         <div class="text-center text-secondary mt-3">
