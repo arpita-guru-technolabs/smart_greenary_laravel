@@ -24,7 +24,8 @@ class StoreSellerRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array|string>
      */
-    public function rules(): array
+
+    public function rules_BKUP(): array
     {
         $rules = [
             // User fields
@@ -33,7 +34,7 @@ class StoreSellerRequest extends FormRequest
             'mobile' => 'required_without:user_id|regex:/^([0-9\s\-\+\(\)]*)$/|min:7|unique:users,mobile',
             'password' => 'required_without:user_id|string',
             // Seller fields
-//            'user_id' => 'nullable|exists:users,id',
+            //'user_id' => 'nullable|exists:users,id',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'state' => 'required|string|max:255',
@@ -53,6 +54,38 @@ class StoreSellerRequest extends FormRequest
         }
         return $rules;
     }
+
+   /* public function rules(): array
+    {
+        // Base rules always required
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'mobile' => 'required|string|max:20|unique:users,mobile',
+            'password' => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|same:password',
+        ];
+
+        // Add address & file rules ONLY if NOT register route
+        if (!Route::is('seller-api.register')) {
+             $rules['user_id'] = 'required|exists:users,id';  
+            $rules['address'] = 'required|string|max:255';
+            $rules['city'] = 'required|string|max:255';
+            $rules['state'] = 'required|string|max:255';
+            $rules['landmark'] = 'required|string|max:255';
+            $rules['zipcode'] = 'required|string|max:255';
+            $rules['country'] = 'required|string|max:255';
+            $rules['latitude'] = 'nullable|string|max:255';
+            $rules['longitude'] = 'nullable|string|max:255';
+            $rules['business_license'] = 'required|image|mimes:jpeg,png,jpg,webp|max:2048';
+            $rules['articles_of_incorporation'] = 'required|image|mimes:jpeg,png,jpg,webp|max:2048';
+            $rules['national_identity_card'] = 'required|image|mimes:jpeg,png,jpg,webp|max:2048';
+            $rules['authorized_signature'] = 'required|image|mimes:jpeg,png,jpg,webp|max:2048';
+        }
+
+        return $rules;
+    }
+
     public function messages(): array
     {
         return [
@@ -64,6 +97,32 @@ class StoreSellerRequest extends FormRequest
             'articles_of_incorporation.required' => __('validation.required', ['attribute' => 'Articles of Incorporation']),
             'national_identity_card.required' => __('validation.required', ['attribute' => 'National Identity Card']),
             'authorized_signature.required' => __('validation.required', ['attribute' => 'Authorized Signature']),
+        ];
+    }*/
+
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'mobile' => 'required|string|max:20|unique:users,mobile',
+            'password' => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|same:password',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Name is required',
+            'email.required' => 'Email is required',
+            'email.email' => 'Please enter a valid email address',
+            'email.unique' => 'This email is already registered',
+            'mobile.required' => 'Mobile number is required',
+            'mobile.unique' => 'This mobile number is already registered',
+            'password.required' => 'Password is required',
+            'password.min' => 'Password must be at least 8 characters',
+            'password.confirmed' => 'Password confirmation does not match',
         ];
     }
 }

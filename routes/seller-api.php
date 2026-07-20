@@ -26,6 +26,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('seller')->name('seller-api.')->group(function () {
     Route::post('register', [SellerAuthApiController::class, 'createSeller'])->name('register');
+
+     // Step 2: OTP
+    Route::post('verify-otp', [SellerAuthApiController::class, 'verifyOtp']);
+    Route::post('resend-otp', [SellerAuthApiController::class, 'resendOtp']);
+
+    // Step 3: Complete Registration
+    Route::post('complete-registration', [SellerAuthApiController::class, 'completeRegistration']);
+
     Route::post('login', [SellerAuthApiController::class, 'login'])->name('login');
     Route::post('auth/phone/callback', [SellerAuthApiController::class, 'phoneCallback'])->name('phone_callback');
     Route::post('forget-password', [SellerAuthApiController::class, 'forgotPassword'])->name('forgot_password');
