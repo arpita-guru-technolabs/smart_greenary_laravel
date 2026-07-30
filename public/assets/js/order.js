@@ -39,7 +39,8 @@ $(document).ready(function () {
     // Handle accept order action
     $('#confirmAccept').on('click', function () {
         if (currentOrderId) {
-            axios.post('/seller/orders/' + currentOrderId + '/accept')
+           // axios.post('/seller/orders/' + currentOrderId + '/accept')
+           axios.post('/website/laravel/smart_greenary/public/seller/orders/' + currentOrderId + '/accept')
                 .then(function (response) {
                     // Handle success
                     table.ajax.reload(updateOrderCount, false);
@@ -65,7 +66,8 @@ $(document).ready(function () {
     // Handle reject order action
     $('#confirmReject').on('click', function () {
         if (currentOrderId) {
-            axios.post('/seller/orders/' + currentOrderId + '/reject')
+           // axios.post('/seller/orders/' + currentOrderId + '/reject')
+           axios.post('/website/laravel/smart_greenary/public/seller/orders/' + currentOrderId + '/reject')
                 .then(function (response) {
                     // Handle success
                     table.ajax.reload(updateOrderCount, false);
@@ -91,7 +93,8 @@ $(document).ready(function () {
     // Handle preparing order action
     $('#confirmPreparing').on('click', function () {
         if (currentOrderId) {
-            axios.post('/seller/orders/' + currentOrderId + '/preparing')
+           // axios.post('/seller/orders/' + currentOrderId + '/preparing')
+           axios.post('/website/laravel/smart_greenary/public/seller/orders/' + currentOrderId + '/preparing')
                 .then(function (response) {
                     // Handle success
                     table.ajax.reload(updateOrderCount, false);
@@ -175,7 +178,8 @@ $(document).ready(function () {
             const variantName = itemRow.find('td:eq(2)').text(); // Variant name is in the third column
 
             // Process each selected item
-            axios.post('/seller/orders/' + itemId + '/' + status)
+            //axios.post('/seller/orders/' + itemId + '/' + status)
+            axios.post('/website/laravel/smart_greenary/public/seller/orders/' + itemId + '/' + status)
                 .then(function (response) {
                     // Handle success
                     let data = response.data;
