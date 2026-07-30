@@ -36,11 +36,23 @@ class FeaturedSectionService
             ->ordered()
             ->with('categories');
 
-        if ($category) {
-            $query = FeaturedSection::scopeByCategory($query, $category->id);
-        } else {
-            $query->where('scope_type', 'global');
-        }
+        // if ($category) {
+        //     $query = FeaturedSection::scopeByCategory($query, $category->id);
+        // } else {
+        //     $query->where('scope_type', 'global');
+        // }
+
+         if ($category) {
+                $query->where(function($q) use ($category) {
+                    $q->where('scope_type', 'global')
+                    ->orWhere(function($q2) use ($category) {
+                        $q2->where('scope_type', 'category')
+                            ->where('scope_id', $category->id);
+                    });
+                });
+            } else {
+                $query->where('scope_type', 'global');
+            }
 
         if (! empty($sectionType)) {
             $query->byType($sectionType);
