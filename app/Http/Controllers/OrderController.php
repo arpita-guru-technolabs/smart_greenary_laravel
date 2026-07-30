@@ -234,7 +234,8 @@ class OrderController extends Controller
                 'route' => route($this->panelView('orders.show'), $this->getPanel() === 'seller' ? $sellerOrderItem->sellerOrder->id : $sellerOrderItem->sellerOrder->order_id),
                 'title' => __('labels.edit_order') . $sellerOrderItem->sellerOrder->id,
                 'status' => $sellerOrderItem->orderItem->status,
-                'editPermission' => $this->getPanel() === 'admin' ? false : $this->editPermission,
+                //'editPermission' => $this->getPanel() === 'admin' ? false : $this->editPermission,
+                'editPermission' => true,
             ])->render(),
         ];
     }
