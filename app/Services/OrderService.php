@@ -1383,6 +1383,87 @@ class OrderService
         }
     }
 
+
+    public function updateOrderStatusByAdmin(int $orderItemId, string $status): array
+    {
+        try {
+            if (!in_array($status, ['accept', 'reject', 'preparing'])) {
+                return [
+                    'success' => false,
+                    'message' => __('labels.invalid_status'),
+                    'data' => []
+                ];
+            }
+
+            $orderItem = OrderItem::where('id', $orderItemId)
+                ->with(['product', 'store.seller.user'])
+                ->first();
+
+            if (!$orderItem) {
+                return [
+                    'success' => false,
+                    'message' => __('labels.order_item_not_found'),
+                    'data' => []
+                ];
+            }
+
+            $currentStatus = $orderItem->status;
+            if ($currentStatus === OrderItemStatusEnum::PENDING()) {
+                return [
+                    'success' => false,
+                    'message' => __('labels.order_payment_pending_cannot_update_status'),
+                    'data' => []
+                ];
+            }
+            if (in_array($currentStatus, [OrderItemStatusEnum::FAILED(), OrderItemStatusEnum::CANCELLED(), OrderItemStatusEnum::COLLECTED(), OrderItemStatusEnum::DELIVERED()])) {
+                return [
+                    'success' => false,
+                    'message' => __('labels.cannot_update_status_because_status_is_already', ['status' => $currentStatus]),
+                    'data' => []
+                ];
+            }
+
+            $updateStatus = $this->mapStatusToEnum($status, 'seller');
+            if (!$updateStatus) {
+                return [
+                    'success' => false,
+                    'message' => __('labels.invalid_status'),
+                    'data' => []
+                ];
+            }
+
+            $validationResult = $this->validateStatusTransition($currentStatus, $updateStatus, 'seller');
+            if (!$validationResult['success']) {
+                return [
+                    'success' => false,
+                    'message' => $validationResult['message'],
+                    'data' => []
+                ];
+            }
+
+            $sellerId = $orderItem->store->seller->id ?? null;
+
+            return $this->updateOrderStatusAndRelatedEntities(
+                $orderItem,
+                $updateStatus,
+                $currentStatus,
+                'admin',
+                $sellerId
+            );
+        } catch (Exception $e) {
+            Log::error('Error in updateOrderStatusByAdmin', [
+                'order_item_id' => $orderItemId,
+                'status' => $status,
+                'error' => $e->getMessage()
+            ]);
+            return [
+                'success' => false,
+                'message' => __('messages.order_status_update_failed'),
+                'data' => ['error' => $e->getMessage()]
+            ];
+        }
+    }
+
     function getReturnDeadline(int $days, string $fromDate = null): string
     {
         $baseDate = $fromDate ? Carbon::parse($fromDate) : Carbon::now();

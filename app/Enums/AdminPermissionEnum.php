@@ -66,6 +66,8 @@ use ArchTech\Enums\Values;
  * @method static COMMISSION_VIEW()
  * @method static COMMISSION_SETTLE()
  * @method static ORDER_VIEW()
+ * @method static ORDER_EDIT()
+ * @method static ORDER_UPDATE_STATUS()
  * @method static RETURN_VIEW()
  * @method static PRODUCT_VIEW()
  * @method static PRODUCT_STATUS_UPDATE()
@@ -203,6 +205,8 @@ enum AdminPermissionEnum: string
     case COMMISSION_VIEW = 'commission.view';
     case COMMISSION_SETTLE = 'commission.settle';
     case ORDER_VIEW = 'orders.view';
+    case ORDER_EDIT = 'order.edit';
+    case ORDER_UPDATE_STATUS = 'order.update_status';
     case RETURN_VIEW = 'return.view';
     case PRODUCT_VIEW = 'product.view';
     case PRODUCT_CREATE = 'product.create';  
@@ -241,6 +245,8 @@ enum AdminPermissionEnum: string
                 'name' => 'Orders',
                 'permissions' => [
                     self::ORDER_VIEW(),
+                    self::ORDER_EDIT(),
+                    self::ORDER_UPDATE_STATUS(),
                 ],
             ],
             'return' => [

@@ -137,6 +137,11 @@ $(document).ready(function () {
     $('#update-status-form').on('submit', function (e) {
         e.preventDefault();
 
+          const isAdmin = window.location.pathname.includes('/admin/');
+            const baseUrl = isAdmin
+                ? '/website/laravel/smart_greenary/public/admin/orders'
+                : '/website/laravel/smart_greenary/public/seller/orders';
+
         const selectedItems = $('.item-checkbox:checked');
         if (selectedItems.length === 0) {
             $('#status-update-results').html(
@@ -179,7 +184,8 @@ $(document).ready(function () {
 
             // Process each selected item
             //axios.post('/seller/orders/' + itemId + '/' + status)
-            axios.post('/website/laravel/smart_greenary/public/seller/orders/' + itemId + '/' + status)
+           // axios.post('/website/laravel/smart_greenary/public/seller/orders/' + itemId + '/' + status)
+           axios.post(baseUrl + '/' + itemId + '/' + status)
                 .then(function (response) {
                     // Handle success
                     let data = response.data;

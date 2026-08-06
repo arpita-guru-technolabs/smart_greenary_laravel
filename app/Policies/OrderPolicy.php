@@ -95,17 +95,46 @@ class OrderPolicy
     /**
      * Determine whether the user can update the status of an order item.
      */
-    public function updateStatus(User $user, SellerOrderItem $orderItem): bool
+    // public function updateStatus(User $user, SellerOrderItem $orderItem): bool
+    // {
+    //     try {
+    //         // Only the seller who owns the order can update its status
+    //         if ($user->seller() == null) {
+    //             return false;
+    //         }
+
+    //         // Check if the user is the owner
+    //         if ($user->seller()->id == $orderItem->sellerOrder->seller_id) {
+    //             // Check role or permission
+    //             if (
+    //                 $user->hasRole(DefaultSystemRolesEnum::SELLER()) ||
+    //                 $this->hasPermission(SellerPermissionEnum::ORDER_UPDATE_STATUS())
+    //             ) {
+    //                 return true;
+    //             }
+    //         }
+
+    //         return false;
+    //     } catch (\Exception) {
+    //         return false;
+    //     }
+    // }
+
+    public function updateStatus(User $user, $orderItem): bool
     {
         try {
-            // Only the seller who owns the order can update its status
+            // Admin path
+            // if ($user->seller() == null) {
+            //     return $this->hasPermission(AdminPermissionEnum::ORDER_EDIT());
+            // }
+
             if ($user->seller() == null) {
-                return false;
+                //return $this->hasPermission(AdminPermissionEnum::ORDER_VIEW());
+                return $this->hasPermission(AdminPermissionEnum::ORDER_UPDATE_STATUS());
             }
 
-            // Check if the user is the owner
+            // Existing seller path — unchanged
             if ($user->seller()->id == $orderItem->sellerOrder->seller_id) {
-                // Check role or permission
                 if (
                     $user->hasRole(DefaultSystemRolesEnum::SELLER()) ||
                     $this->hasPermission(SellerPermissionEnum::ORDER_UPDATE_STATUS())

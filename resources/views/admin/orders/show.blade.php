@@ -1,4 +1,4 @@
-@php use App\Enums\Order\OrderItemStatusEnum; @endphp
+@php use App\Enums\Order\OrderItemStatusEnum;use App\Enums\Order\OrderStatusEnum; @endphp
 @extends('layouts.admin.app', ['page' => $menuAdmin['orders']['active'] ?? ""])
 @section('title', __('labels.order_details'))
 
@@ -179,9 +179,9 @@
                                     <table class="table table-vcenter card-table">
                                         <thead>
                                         <tr>
-                                            {{--                                            <th width="30">--}}
-                                            {{--                                                <input type="checkbox" class="form-check-input" id="select-all-items">--}}
-                                            {{--                                            </th>--}}
+                                                        <th width="30">
+                                                                        <input type="checkbox" class="form-check-input" id="select-all-items">
+                                                        </th>
                                             <th>{{ __('labels.store_name') }}</th>
                                             <th>{{ __('labels.product') }}</th>
                                             <th>{{ __('labels.variant') }}</th>
@@ -194,10 +194,9 @@
                                         <tbody>
                                         @foreach($order['items'] as $item)
                                             <tr>
-                                                {{--                                                <td>--}}
-                                                {{--                                                    <input type="checkbox" class="form-check-input item-checkbox"--}}
-                                                {{--                                                           name="item_ids[]" value="{{ $item['orderItem']['id'] }}">--}}
-                                                {{--                                                </td>--}}
+                                                <td>
+                                                 <input type="checkbox" class="form-check-input item-checkbox" name="item_ids[]" value="{{ $item['orderItem']['id'] }}">
+                                                </td>
                                                 <td>{{ $item['store']['name'] ?? 'N/A' }}</td>
                                                 <td>{{ $item['product']['title'] ?? 'N/A' }}
                                                     @if(!empty($item['attachments']))
@@ -336,41 +335,43 @@
                     </div>
 
                     <!-- Update Status Card -->
-                    {{--                    <div class="col-12 mt-3">--}}
-                    {{--                        <div class="card">--}}
-                    {{--                            <div class="card-header">--}}
-                    {{--                                <h3 class="card-title">{{ __('labels.update_status') }}</h3>--}}
-                    {{--                            </div>--}}
-                    {{--                            <div class="card-body">--}}
-                    {{--                                <div class="alert alert-info mb-3">--}}
-                    {{--                                    <p class="mb-0">{{ __('labels.select_items_to_update_status') ?? 'Select one or more items from the table above to update their status.' }}</p>--}}
-                    {{--                                </div>--}}
-                    {{--                                <div id="status-update-results" class="mb-3"></div>--}}
-                    {{--                                <form id="update-status-form" method="POST">--}}
-                    {{--                                    @csrf--}}
-                    {{--                                    <div class="mb-3">--}}
-                    {{--                                        <label class="form-label">{{ __('labels.status') }}</label>--}}
-                    {{--                                        <select name="status" class="form-select text-capitalize" id="item-status">--}}
-                    {{--                                            <option--}}
-                    {{--                                                    value="accept">Accept--}}
-                    {{--                                            </option>--}}
-                    {{--                                            <option--}}
-                    {{--                                                    value="reject">Reject--}}
-                    {{--                                            </option>--}}
-                    {{--                                            <option--}}
-                    {{--                                                    value="preparing">Preparing--}}
-                    {{--                                            </option>--}}
-                    {{--                                        </select>--}}
-                    {{--                                    </div>--}}
-                    {{--                                    <div class="mb-3">--}}
-                    {{--                                        <button type="submit" class="btn btn-primary" id="update-items-status">--}}
-                    {{--                                            {{ __('labels.update_status') }}--}}
-                    {{--                                        </button>--}}
-                    {{--                                    </div>--}}
-                    {{--                                </form>--}}
-                    {{--                            </div>--}}
-                    {{--                        </div>--}}
-                    {{--                    </div>--}}
+                     @if(!in_array($order['status'], [OrderStatusEnum::COLLECTED(), OrderStatusEnum::READY_FOR_PICKUP(), OrderStatusEnum::OUT_FOR_DELIVERY(), OrderStatusEnum::DELIVERED(), OrderStatusEnum::FAILED(), OrderStatusEnum::CANCELLED()]))
+                                <div class="col-12 mt-3">
+                                           <div class="card">
+                                               <div class="card-header">
+                                                   <h3 class="card-title">{{ __('labels.update_status') }}</h3>
+                                               </div>
+                                               <div class="card-body">
+                                                  <div class="alert alert-info mb-3">
+                                                       <p class="mb-0">{{ __('labels.select_items_to_update_status') ?? 'Select one or more items from the table above to update their status.' }}</p>
+                                                    </div>
+                                                   <div id="status-update-results" class="mb-3"></div>
+                                                    <form id="update-status-form" method="POST" data-base-url="{{ url('/admin/orders') }}">
+                                                        @csrf
+                                                        <div class="mb-3">
+                                                         <label class="form-label">{{ __('labels.status') }}</label>
+                                                            <select name="status" class="form-select text-capitalize" id="item-status">
+                                                                <option
+                                                                        value="accept">Accept
+                                                                </option>
+                                                                <option
+                                                                        value="reject">Reject
+                                                                </option>
+                                                                <option
+                                                                        value="preparing">Preparing
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <button type="submit" class="btn btn-primary" id="update-items-status">
+                                                                {{ __('labels.update_status') }}
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                    </div>
+                     @endif
                 </div>
             </div>
         </div>

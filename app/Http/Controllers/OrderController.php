@@ -328,46 +328,128 @@ class OrderController extends Controller
      * @param string $status
      * @return JsonResponse
      */
+    // public function updateStatus(int $id, string $status): JsonResponse
+    // {
+    //     try {
+    //         $seller = auth()->user()->seller();
+    //         if (!$seller) {
+    //             return ApiResponseType::sendJsonResponse(false, __('labels.seller_not_found'));
+    //         }
+
+    //         // Find the order item to authorize the action
+    //         $orderItem = SellerOrderItem::where('order_item_id', $id)
+    //             ->whereHas('sellerOrder', function ($q) use ($seller) {
+    //                 $q->where('seller_id', $seller->id);
+    //             })
+    //             ->first();
+
+    //         if (!$orderItem) {
+    //             return ApiResponseType::sendJsonResponse(
+    //                 success: false,
+    //                 message: __('labels.order_item_not_found'),
+    //                 data: []
+    //             );
+    //         }
+
+    //         $this->authorize('updateStatus', $orderItem);
+
+    //         // Use the OrderService to update the status
+    //         $result = $this->orderService->updateOrderStatusBySeller($id, $status, $seller->id);
+    //         if (!$result['success']) {
+    //             return ApiResponseType::sendJsonResponse(
+    //                 success: false,
+    //                 message: $result['message'],
+    //                 data: $result['data'],
+    //             );
+    //         }
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => $result['message'],
+    //             'data' => $result['data']
+    //         ]);
+    //     } catch (AuthorizationException) {
+    //         return ApiResponseType::sendJsonResponse(
+    //             success: false,
+    //             message: __('messages.unauthorized_action'),
+    //             data: []
+    //         );
+    //     } catch (\Exception $e) {
+    //         return ApiResponseType::sendJsonResponse(
+    //             success: false,
+    //             message: __('messages.order_status_update_failed'),
+    //             data: []
+    //         );
+    //     }
+    // }
+
     public function updateStatus(int $id, string $status): JsonResponse
     {
         try {
-            $seller = auth()->user()->seller();
-            if (!$seller) {
-                return ApiResponseType::sendJsonResponse(false, __('labels.seller_not_found'));
+            if ($this->getPanel() === 'seller') {
+                $seller = auth()->user()->seller();
+                if (!$seller) {
+                    return ApiResponseType::sendJsonResponse(false, __('labels.seller_not_found'));
+                }
+
+                $orderItem = SellerOrderItem::where('order_item_id', $id)
+                    ->whereHas('sellerOrder', function ($q) use ($seller) {
+                        $q->where('seller_id', $seller->id);
+                    })
+                    ->first();
+
+                if (!$orderItem) {
+                    return ApiResponseType::sendJsonResponse(
+                        success: false,
+                        message: __('labels.order_item_not_found'),
+                        data: []
+                    );
+                }
+
+                $this->authorize('updateStatus', $orderItem);
+
+                $result = $this->orderService->updateOrderStatusBySeller($id, $status, $seller->id);
+                if (!$result['success']) {
+                    return ApiResponseType::sendJsonResponse(
+                        success: false,
+                        message: $result['message'],
+                        data: $result['data'],
+                    );
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => $result['message'],
+                    'data' => $result['data']
+                ]);
+            } else {
+                $orderItem = OrderItem::find($id);
+
+                if (!$orderItem) {
+                    return ApiResponseType::sendJsonResponse(
+                        success: false,
+                        message: __('labels.order_item_not_found'),
+                        data: []
+                    );
+                }
+
+                $this->authorize('updateStatus', $orderItem);
+
+                $result = $this->orderService->updateOrderStatusByAdmin($id, $status);
+                if (!$result['success']) {
+                    return ApiResponseType::sendJsonResponse(
+                        success: false,
+                        message: $result['message'],
+                        data: $result['data'],
+                    );
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => $result['message'],
+                    'data' => $result['data']
+                ]);
             }
-
-            // Find the order item to authorize the action
-            $orderItem = SellerOrderItem::where('order_item_id', $id)
-                ->whereHas('sellerOrder', function ($q) use ($seller) {
-                    $q->where('seller_id', $seller->id);
-                })
-                ->first();
-
-            if (!$orderItem) {
-                return ApiResponseType::sendJsonResponse(
-                    success: false,
-                    message: __('labels.order_item_not_found'),
-                    data: []
-                );
-            }
-
-            $this->authorize('updateStatus', $orderItem);
-
-            // Use the OrderService to update the status
-            $result = $this->orderService->updateOrderStatusBySeller($id, $status, $seller->id);
-            if (!$result['success']) {
-                return ApiResponseType::sendJsonResponse(
-                    success: false,
-                    message: $result['message'],
-                    data: $result['data'],
-                );
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => $result['message'],
-                'data' => $result['data']
-            ]);
         } catch (AuthorizationException) {
             return ApiResponseType::sendJsonResponse(
                 success: false,
